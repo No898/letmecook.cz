@@ -15,7 +15,7 @@ const updateConsent = (accepted: boolean) => {
   if (typeof window.gtag === "function") {
     const consentState = {
       analytics_storage: accepted ? "granted" : "denied",
-      ad_storage: accepted ? "granted" : "denied", // Synchronizujeme i ads souhlas
+      ad_storage: accepted ? "granted" : "denied",
       ad_user_data: accepted ? "granted" : "denied",
       ad_personalization: accepted ? "granted" : "denied",
     };
@@ -75,7 +75,7 @@ export default function CookieConsentBanner() {
             damping: 20,
             delay: 0.2,
           }}
-          className="fixed bottom-5 right-5 z-[999] w-full max-w-md p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 font-sans"
+          className="fixed bottom-4 left-4 right-4 z-[999] p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 font-sans sm:left-auto sm:right-5 sm:bottom-5 sm:w-full sm:max-w-md"
         >
           <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1 font-serif">
             Trocha soukromí, prosím
