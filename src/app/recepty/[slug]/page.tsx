@@ -1,149 +1,151 @@
-import { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 // Předpokládáme, že používáte 'next/image' pro optimalizaci obrázků
 import Image from "next/image";
 // Importujte vaši funkci pro načtení dat receptu (nebo použijte jiný způsob)
 // import { getRecipeBySlug } from '@/lib/recipes'; // Příklad importu
+import { notFound } from "next/navigation";
+// Import GSAP wrapperu
+import GsapScrollWrapper from "@/components/GsapScrollWrapper";
+// Vrácen import původního datového souboru
+import { recipes, Recipe as OriginalRecipeType } from "@/data/recipesData";
+// import { getRecipeData } from "@/lib/recipeLoader"; // Zakomentováno/nahrazeno
 
-// --- Struktura dat receptu ---
-// Ujistěte se, že vaše funkce pro načítání dat vrací objekt
-// s poli odpovídajícími Schema.org/Recipe
-// TOTO JE JEN PŘÍKLAD - PŘIZPŮSOBTE VAŠÍ STRUKTUŘE DAT
+// --- Definice standardního typu Props ---
+type Props = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+// -------------------------------------
+
+// --- Struktura dat receptu - Odkomentováno a upraveno ---
+// Tato struktura definuje, jaká data očekáváme *v této komponentě*
 interface RecipeData {
-  slug: string;
-  name: string;
+  id: string; // Přidáno zpět id
+  title: string; // Použijeme 'title' z dat
+  vietnameseTitle?: string;
+  imageUrl?: string; // Použijeme 'imageUrl' z dat
   description: string;
-  featuredImageUrl: string; // URL hlavního obrázku
-  prepTime?: string; // ISO 8601 duration (např. "PT30M") - nepovinné, ale doporučené
-  cookTime?: string; // ISO 8601 duration (např. "PT1H") - nepovinné, ale doporučené
-  totalTime?: string; // ISO 8601 duration - nepovinné, ale doporučené
-  recipeYield?: string; // Počet porcí (např. "4 porce") - nepovinné, ale doporučené
-  recipeCategory?: string; // Kategorie (např. "Dezert", "Hlavní chod") - nepovinné
-  recipeCuisine?: string; // Kuchyně (např. "Česká", "Italská") - nepovinné
-  keywords?: string; // Klíčová slova oddělená čárkou (např. "koláč, citron, dezert")
-  authorName: string; // Jméno autora
-  datePublished: string; // Datum publikace ve formátu YYYY-MM-DD (např. "2024-05-23")
-  dateModified?: string; // Datum poslední úpravy YYYY-MM-DD - nepovinné
-  ingredients: string[]; // Pole textových řetězců ingrediencí
-  instructions: string[]; // Pole textových řetězců kroků postupu
-  // Volitelná pole pro lepší výsledky:
-  // aggregateRating?: { ratingValue: number; reviewCount: number };
-  // nutrition?: { calories: string; ... };
-  // video?: { contentUrl: string; name: string; description: string; uploadDate: string; thumbnailUrl: string; };
+  ingredients: OriginalRecipeType["ingredients"]; // Typ z původního souboru
+  procedure: OriginalRecipeType["procedure"]; // Typ z původního souboru
+  tips?: OriginalRecipeType["tips"]; // Typ z původního souboru
+  serving: OriginalRecipeType["serving"]; // Typ z původního souboru
+  authorName: string;
+  datePublished: string;
+  prepTime?: string;
+  cookTime?: string;
+  totalTime?: string;
+  recipeCategory?: string;
+  recipeCuisine?: string;
+  keywords?: string;
+  // Pole, která možná chybí v OriginalRecipeType, ale chceme je použít (např. pro Schema)
+  dateModified?: string; // Pokud toto pole v OriginalRecipeType není, bude zde undefined
+  recipeYield?: string;
 }
+// ---------------------------------------------------------
 
 // --- Funkce pro načtení dat ---
-// TOTO NAHRAĎTE VAŠÍ SKUTEČNOU FUNKCÍ PRO NAČTENÍ DAT RECEPTU
+// Vrací data ve formátu našeho lokálního interface RecipeData
 async function getRecipeData(slug: string): Promise<RecipeData | null> {
-  console.warn(
-    `Schema generation: Using placeholder data for recipe ${slug}. Replace getRecipeData with actual implementation.`
-  );
-  // Příklad placeholder dat - nahraďte voláním vaší DB/API
-  if (slug === "muj-prvni-recept") {
-    return {
-      slug: "muj-prvni-recept",
-      name: "Můj První Úžasný Recept",
-      description: "Jednoduchý a chutný recept, který zvládne každý.",
-      featuredImageUrl: "/images/placeholder-recept.jpg", // Použijte relativní cestu z /public nebo absolutní URL
-      prepTime: "PT15M",
-      cookTime: "PT30M",
-      totalTime: "PT45M",
-      recipeYield: "2 porce",
-      recipeCategory: "Hlavní chod",
-      recipeCuisine: "Česká",
-      keywords: "jednoduchý, rychlý, pečení",
-      authorName: "Tomáš Dinh",
-      datePublished: "2024-05-20",
-      dateModified: "2024-05-23",
-      ingredients: [
-        "1 hrnek hladké mouky",
-        "1 lžička kypřícího prášku",
-        "1/2 hrnku cukru",
-        "1 vejce",
-        "100ml mléka",
-        "50g másla, rozpuštěného",
-      ],
-      instructions: [
-        "Předehřejte troubu na 180°C.",
-        "V míse smíchejte mouku, kypřící prášek a cukr.",
-        "V jiné míse rozšlehejte vejce s mlékem a rozpuštěným máslem.",
-        "Tekutou směs přilijte k suchým ingrediencím a krátce promíchejte.",
-        "Těsto nalijte do vymazané formy.",
-        "Pečte přibližně 30 minut, nebo dokud špejle nevyjde čistá.",
-      ],
-    };
+  const recipe = recipes.find((r) => r.id === slug);
+  if (!recipe) {
+    console.warn(`Recipe with slug "${slug}" not found in recipesData.ts`);
+    return null;
   }
-  return null;
+  // Mapování dat z OriginalRecipeType na náš lokální RecipeData interface
+  // Pokud pole v OriginalRecipeType chybí, budou undefined
+  return {
+    id: recipe.id,
+    title: recipe.title,
+    vietnameseTitle: recipe.vietnameseTitle,
+    imageUrl: recipe.imageUrl,
+    description: recipe.description,
+    ingredients: recipe.ingredients,
+    procedure: recipe.procedure,
+    tips: recipe.tips,
+    serving: recipe.serving,
+    authorName: recipe.authorName, // Předpokládáme, že tato pole existují v OriginalRecipeType
+    datePublished: recipe.datePublished,
+    prepTime: recipe.prepTime,
+    cookTime: recipe.cookTime,
+    totalTime: recipe.totalTime,
+    recipeCategory: recipe.recipeCategory,
+    recipeCuisine: recipe.recipeCuisine,
+    keywords: recipe.keywords,
+    // dateModified: recipe.dateModified, // Odkomentujte, pokud dateModified existuje v OriginalRecipeType
+    // recipeYield: recipe.recipeYield, // Odkomentujte, pokud recipeYield existuje v OriginalRecipeType
+  };
 }
 // ------------------------------------
 
 // --- Metadata pro <head> ---
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  { params }: Props,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _parent: ResolvingMetadata // Přidán komentář pro ESLint
+): Promise<Metadata> {
   const recipe = await getRecipeData(params.slug);
+
   if (!recipe) {
     return { title: "Recept nenalezen" };
   }
+
+  const pageTitle = `${recipe.title} | Recepty Tomáše Dinh`; // Použito title
+  const pageDescription = recipe.description;
+  const imageUrl = recipe.imageUrl?.startsWith("/")
+    ? `${process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz"}${
+        recipe.imageUrl
+      }`
+    : recipe.imageUrl || "";
+
+  // Získání předchozích obrázků (pokud je potřeba kombinovat)
+  // const previousImages = (await _parent).openGraph?.images || []
+
   return {
-    title: `${recipe.name} | Recepty Tomáše Dinh`,
-    description: recipe.description,
-    // Můžete přidat i Open Graph metadata pro sociální sítě
+    title: pageTitle,
+    description: pageDescription,
     openGraph: {
-      title: `${recipe.name} | Recepty Tomáše Dinh`,
-      description: recipe.description,
-      images: [
-        {
-          url: recipe.featuredImageUrl.startsWith("/")
-            ? `${process.env.NEXT_PUBLIC_BASE_URL}${recipe.featuredImageUrl}`
-            : recipe.featuredImageUrl,
-          width: 1200, // Odhad nebo skutečná šířka
-          height: 630, // Odhad nebo skutečná výška
-          alt: recipe.name,
-        },
-      ],
-      type: "article", // 'article' je vhodné pro recept
-      publishedTime: recipe.datePublished,
-      modifiedTime: recipe.dateModified || recipe.datePublished,
+      title: pageTitle,
+      description: pageDescription,
+      images: imageUrl
+        ? [{ url: imageUrl, width: 1200, height: 630, alt: recipe.title }]
+        : [], // Použito title
+      type: "article",
+      // publishedTime: recipe.datePublished, // TODO: Zajistit správný formát
+      // modifiedTime: recipe.dateModified || recipe.datePublished, // TODO: Zajistit správný formát
       authors: [recipe.authorName],
-      // url: `${process.env.NEXT_PUBLIC_BASE_URL}/recepty/${recipe.slug}`, // Kanonická URL
+      url: `${
+        process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz"
+      }/recepty/${params.slug}`, // Použit params.slug
     },
   };
 }
 // ---------------------------
 
 // --- Komponenta stránky ---
-export default async function RecipePage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default async function RecipePage({ params }: Props) {
   const recipe = await getRecipeData(params.slug);
 
   if (!recipe) {
-    // Zde by měla být skutečná 404 stránka pomocí notFound() z 'next/navigation'
-    // import { notFound } from 'next/navigation';
-    // notFound();
-    return <div>Recept nenalezen</div>;
+    notFound();
   }
 
   // --- Vytvoření JSON-LD dat pro Schema.org ---
   const jsonLd = {
     "@context": "https://schema.org/",
     "@type": "Recipe",
-    name: recipe.name,
+    name: recipe.title, // Použito title
     description: recipe.description,
-    // Obrázek: Použijte absolutní URL
-    image: recipe.featuredImageUrl.startsWith("/")
-      ? `${process.env.NEXT_PUBLIC_BASE_URL}${recipe.featuredImageUrl}`
-      : recipe.featuredImageUrl,
+    image: recipe.imageUrl?.startsWith("/") // Použito imageUrl
+      ? `${process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz"}${
+          recipe.imageUrl
+        }`
+      : recipe.imageUrl,
     author: {
       "@type": "Person",
       name: recipe.authorName,
     },
     datePublished: recipe.datePublished,
-    ...(recipe.dateModified && { dateModified: recipe.dateModified }), // Přidat jen pokud existuje
+    ...(recipe.dateModified && { dateModified: recipe.dateModified }),
     ...(recipe.prepTime && { prepTime: recipe.prepTime }),
     ...(recipe.cookTime && { cookTime: recipe.cookTime }),
     ...(recipe.totalTime && { totalTime: recipe.totalTime }),
@@ -151,11 +153,19 @@ export default async function RecipePage({
     ...(recipe.recipeYield && { recipeYield: recipe.recipeYield }),
     ...(recipe.recipeCategory && { recipeCategory: recipe.recipeCategory }),
     ...(recipe.recipeCuisine && { recipeCuisine: recipe.recipeCuisine }),
-    recipeIngredient: recipe.ingredients,
-    // Instrukce je lepší formátovat jako HowToStep pro větší detail
-    recipeInstructions: recipe.instructions.map((stepText) => ({
-      "@type": "HowToStep",
-      text: stepText,
+    // Použití správných typů z importovaného Recipe
+    recipeIngredient: recipe.ingredients.flatMap((section) => section.items),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    recipeInstructions: recipe.procedure.map((section, _sectionIndex) => ({
+      // Přidán komentář pro ESLint
+      "@type": "HowToSection",
+      name: section.sectionTitle,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      itemListElement: section.steps.map((stepText, _stepIndex) => ({
+        // Přidán komentář pro ESLint
+        "@type": "HowToStep",
+        text: stepText,
+      })),
     })),
     // --- Volitelná, ale doporučená pole ---
     // ...(recipe.aggregateRating && {
@@ -188,69 +198,145 @@ export default async function RecipePage({
   // -----------------------------------------
 
   return (
-    <article>
-      {" "}
-      {/* Použití sémantického tagu <article> */}
-      {/* Vložení JSON-LD skriptu do <head> nepřímo přes metadata nebo přímo zde */}
-      {/* Next.js doporučuje vkládat JSON-LD spíše takto přímo do těla stránky */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      {/* --- Zobrazení obsahu receptu --- */}
-      <h1>{recipe.name}</h1>
-      {/* Použití next/image pro optimalizaci */}
-      <Image
-        src={recipe.featuredImageUrl}
-        alt={recipe.name}
-        width={800} // Nastavte vhodnou šířku
-        height={450} // Nastavte vhodnou výšku
-        priority // Pokud je to hlavní obrázek nad ohybem, použijte priority
-        style={{ objectFit: "cover", width: "100%", height: "auto" }} // Příklad stylů
-      />
-      <p>{recipe.description}</p>
-      {/* Zobrazení detailů jako čas přípravy, vaření, porce atd. */}
-      <div className="recipe-details">
-        {recipe.totalTime && (
-          <p>
-            Celkový čas:{" "}
-            {recipe.totalTime
-              .replace("PT", "")
-              .replace("H", "h ")
-              .replace("M", "m")}
+    // Použití GSAP wrapperu
+    <GsapScrollWrapper>
+      <article className="prose lg:prose-xl mx-auto px-4 py-8 pt-12">
+        {" "}
+        {/* Article je nyní uvnitř wrapperu */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd, null, 2) }}
+        />
+        {/* --- Zbytek obsahu receptu --- */}
+        <h1>{recipe.title}</h1> {/* Použito title */}
+        {recipe.vietnameseTitle && (
+          <p className="text-lg italic text-gray-600 -mt-4 mb-4">
+            {recipe.vietnameseTitle}
           </p>
         )}
-        {recipe.recipeYield && <p>Počet porcí: {recipe.recipeYield}</p>}
-        {/* ... další detaily ... */}
-      </div>
-      <h2>Ingredience</h2>
-      <ul>
-        {recipe.ingredients.map((ing, index) => (
-          <li key={index}>{ing}</li>
-        ))}
-      </ul>
-      <h2>Postup</h2>
-      {/* Lepší sémantika pro kroky */}
-      <ol>
-        {recipe.instructions.map((step, index) => (
-          <li key={index}>{step}</li>
-        ))}
-      </ol>
-      {/* Zobrazení autora, data publikace atd. */}
-      <div className="recipe-meta">
-        <p>Autor: {recipe.authorName}</p>
-        <p>
-          Publikováno:{" "}
-          {new Date(recipe.datePublished).toLocaleDateString("cs-CZ")}
-        </p>
-        {recipe.dateModified && (
-          <p>
-            Upraveno:{" "}
-            {new Date(recipe.dateModified).toLocaleDateString("cs-CZ")}
-          </p>
+        {recipe.imageUrl && ( // Použito imageUrl
+          <div className="relative w-full h-64 md:h-96 mb-6">
+            <Image
+              src={recipe.imageUrl}
+              alt={recipe.title} // Použito title
+              fill
+              priority
+              className="object-cover rounded-md shadow-md"
+            />
+          </div>
         )}
-      </div>
-      {/* Místo pro hodnocení, komentáře, atd. */}
-    </article>
+        <p className="lead">{recipe.description}</p>
+        {/* Zobrazení detailů jako čas přípravy, vaření, porce atd. */}
+        <div className="recipe-details">
+          {recipe.totalTime && (
+            <p>
+              Celkový čas:{" "}
+              {recipe.totalTime
+                .replace("PT", "")
+                .replace("H", "h ")
+                .replace("M", "m")}
+            </p>
+          )}
+          {recipe.recipeYield && <p>Počet porcí: {recipe.recipeYield}</p>}
+          {/* ... další detaily ... */}
+        </div>
+        <h2>Ingredience</h2>
+        <div className="ingredients-section my-6">
+          {recipe.ingredients.map((section, index) => (
+            <div key={`ing-${index}`} className="mb-4">
+              <h3 className="font-semibold text-lg mb-2">
+                {section.sectionTitle}
+              </h3>
+              {section.servings && (
+                <p className="text-sm text-gray-500 italic mb-2">
+                  {section.servings}
+                </p>
+              )}
+              <ul className="list-disc list-inside">
+                {section.items.map((item, itemIndex) => (
+                  <li key={`ing-item-${index}-${itemIndex}`}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <h2>Postup</h2>
+        <div className="procedure-section my-6">
+          {recipe.procedure.map((section, index) => (
+            <div key={`proc-${index}`} className="mb-6">
+              <h3 className="font-semibold text-lg mb-2">
+                {section.sectionTitle}
+              </h3>
+              <ol className="list-decimal list-inside space-y-2">
+                {section.steps.map((step, stepIndex) => (
+                  <li key={`proc-step-${index}-${stepIndex}`}>{step}</li>
+                ))}
+              </ol>
+              {section.videoUrl && (
+                <div className="mt-4">
+                  <a
+                    href={section.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    Podívejte se na video postupu
+                  </a>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Tipy - používá správný typ z RecipeData */}
+        {recipe.tips && (
+          <div className="tips-section my-6 p-4 bg-blue-50 dark:bg-gray-800 rounded-md">
+            <h2 className="!mt-0">{recipe.tips.sectionTitle}</h2>
+            {recipe.tips.items.map((tip, index) => (
+              <div key={`tip-${index}`} className="mb-3 last:mb-0">
+                <h4 className="font-semibold">{tip.title}</h4>
+                <p className="text-sm">{tip.text}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Podávání - používá správný typ z RecipeData */}
+        <div className="serving-section my-6">
+          <h2>{recipe.serving.sectionTitle}</h2>
+          <ul className="list-disc list-inside">
+            {recipe.serving.suggestions.map((suggestion, index) => (
+              <li key={`serve-${index}`}>{suggestion}</li>
+            ))}
+          </ul>
+        </div>
+        {/* Zobrazení autora, data publikace atd. */}
+        <div className="recipe-meta">
+          <p>Autor: {recipe.authorName}</p>
+          <p>
+            Publikováno:{" "}
+            {new Date(recipe.datePublished).toLocaleDateString("cs-CZ")}
+          </p>
+          {/* Pokud dateModified existuje v datech, zobrazí se */}
+          {recipe.dateModified && (
+            <p>
+              Upraveno:{" "}
+              {new Date(recipe.dateModified).toLocaleDateString("cs-CZ")}
+            </p>
+          )}
+        </div>
+        {/* Místo pro hodnocení, komentáře, atd. */}
+      </article>
+    </GsapScrollWrapper>
   );
 }
+// Ujistěte se, že máte styly pro .scroll-progress-bar v globals.css
+// např.:
+// .scroll-progress-bar {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   height: 4px;
+//   background: var(--color-accent); /* Použijte vaši CSS proměnnou nebo barvu */
+//   transform-origin: 0%;
+//   z-index: 50;
+// }

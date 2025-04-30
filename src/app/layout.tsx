@@ -21,7 +21,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Recepty Tomáše Dinh",
+  title: "Moje Recepty - Tomáš Dinh",
   description: "Osobní sbírka oblíbených receptů.",
 };
 
