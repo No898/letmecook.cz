@@ -9,10 +9,17 @@ import {
   useTransform,
   AnimatePresence,
 } from "framer-motion";
-import { Recipe } from "@/data/recipesData";
+import type { Recipe } from "@/types/recipe";
+
+// Typ pro objekt s překlady (můžeme ho zpřesnit)
+interface Translations {
+  [key: string]: string;
+}
 
 interface RecipeDetailClientProps {
   recipe: Recipe;
+  locale: string;
+  translations: Translations; // Místo t přijímáme translations
 }
 
 const ListItem = ({
@@ -54,9 +61,8 @@ const StepItem = ({
     >
       <motion.div
         onClick={onCheck}
-        className={`absolute -left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm transition-colors cursor-pointer ${
-          isChecked ? "bg-green-600 text-white" : "bg-accent text-white"
-        }`}
+        className={`absolute -left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm transition-colors cursor-pointer ${isChecked ? "bg-green-600 text-white" : "bg-accent text-white"
+          }`}
         initial={{ scale: 0 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true, amount: 0.5 }}
@@ -92,9 +98,8 @@ const StepItem = ({
       </motion.div>
       <div
         onClick={onCheck}
-        className={`flex-grow pt-0.5 transition-opacity cursor-pointer ${
-          isChecked ? "opacity-50 line-through" : "opacity-100"
-        }`}
+        className={`flex-grow pt-0.5 transition-opacity cursor-pointer ${isChecked ? "opacity-50 line-through" : "opacity-100"
+          }`}
       >
         {children}
       </div>
@@ -104,6 +109,8 @@ const StepItem = ({
 
 export default function RecipeDetailClient({
   recipe,
+  locale,
+  translations, // Přijetí translations
 }: RecipeDetailClientProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -170,7 +177,7 @@ export default function RecipeDetailClient({
       transition={{ duration: 0.5 }}
     >
       <Link
-        href="/"
+        href={`/${locale}`}
         className="inline-flex items-center gap-2 text-accent hover:underline mb-8 text-sm"
       >
         <svg
@@ -187,7 +194,7 @@ export default function RecipeDetailClient({
             d="M15.75 19.5 8.25 12l7.5-7.5"
           />
         </svg>
-        Zpět na všechny recepty
+        {translations.back_to_recipes}
       </Link>
 
       <div className="text-center mb-12">
@@ -226,7 +233,7 @@ export default function RecipeDetailClient({
       {/* Ikonky pro sdílení a kopírování */}
       <div className="flex justify-center items-center space-x-4 mb-12">
         <span className="text-sm text-gray-500 dark:text-gray-400">
-          Sdílet:
+          {translations.share_label}
         </span>
         {/* Facebook */}
         <a
@@ -235,7 +242,7 @@ export default function RecipeDetailClient({
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          title="Sdílet na Facebooku"
+          title={translations.share_on_facebook}
           className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
         >
           <svg
@@ -254,7 +261,7 @@ export default function RecipeDetailClient({
           )}`}
           target="_blank"
           rel="noopener noreferrer"
-          title="Sdílet na WhatsApp"
+          title={translations.share_on_whatsapp}
           className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
         >
           <svg
@@ -273,7 +280,7 @@ export default function RecipeDetailClient({
           )}&text=${encodeURIComponent(recipe.title)}`}
           target="_blank"
           rel="noopener noreferrer"
-          title="Sdílet na X"
+          title={translations.share_on_x}
           className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
         >
           <svg
@@ -292,7 +299,7 @@ export default function RecipeDetailClient({
           )}&body=${encodeURIComponent(
             "Podívej se na tento recept: " + currentUrl
           )}`}
-          title="Sdílet e-mailem"
+          title={translations.share_via_email}
           className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
         >
           <svg
@@ -313,8 +320,8 @@ export default function RecipeDetailClient({
         {/* Kopírovat odkaz */}
         <button
           onClick={handleCopyLink}
-          title={isCopied ? "Odkaz zkopírován" : "Kopírovat odkaz"}
-          aria-label={isCopied ? "Odkaz zkopírován" : "Kopírovat odkaz"}
+          title={isCopied ? translations.link_copied : translations.copy_link}
+          aria-label={isCopied ? translations.link_copied : translations.copy_link}
           className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150 relative"
           aria-live="polite"
         >
@@ -347,10 +354,9 @@ export default function RecipeDetailClient({
               />
             </svg>
           )}
-          {/* Tooltip pro 'Zkopírováno!' - alternativní indikace */}
           {isCopied && (
             <span className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-800 px-2 py-1 text-xs text-white opacity-75">
-              Zkopírováno!
+              {translations.copied_tooltip}
             </span>
           )}
         </button>
@@ -381,11 +387,10 @@ export default function RecipeDetailClient({
                   return (
                     <ListItem key={key} delay={itemIndex * 0.05}>
                       <motion.div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5 ${
-                          isChecked
-                            ? "bg-accent border-accent"
-                            : "border-gray-300 dark:border-gray-600 hover:border-accent"
-                        }`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5 ${isChecked
+                          ? "bg-accent border-accent"
+                          : "border-gray-300 dark:border-gray-600 hover:border-accent"
+                          }`}
                         onClick={() => handleCheck(sectionIndex, itemIndex)}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -412,9 +417,8 @@ export default function RecipeDetailClient({
                         </AnimatePresence>
                       </motion.div>
                       <span
-                        className={`transition-opacity cursor-pointer ${
-                          isChecked ? "opacity-50 line-through" : "opacity-100"
-                        }`}
+                        className={`transition-opacity cursor-pointer ${isChecked ? "opacity-50 line-through" : "opacity-100"
+                          }`}
                         onClick={() => handleCheck(sectionIndex, itemIndex)}
                       >
                         {item}
@@ -449,23 +453,21 @@ export default function RecipeDetailClient({
                     <div className="flex space-x-1 border border-gray-300 dark:border-gray-600 rounded-full p-0.5 text-sm">
                       <button
                         onClick={() => toggleProcedureView(sectionIndex)}
-                        className={`px-3 py-1 rounded-full transition-colors ${
-                          currentView === "detailed"
-                            ? "bg-accent text-white"
-                            : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full transition-colors ${currentView === "detailed"
+                          ? "bg-accent text-white"
+                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                          }`}
                       >
-                        Detailní
+                        {translations.detailed}
                       </button>
                       <button
                         onClick={() => toggleProcedureView(sectionIndex)}
-                        className={`px-3 py-1 rounded-full transition-colors ${
-                          currentView === "brief"
-                            ? "bg-accent text-white"
-                            : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                        }`}
+                        className={`px-3 py-1 rounded-full transition-colors ${currentView === "brief"
+                          ? "bg-accent text-white"
+                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
+                          }`}
                       >
-                        Stručné
+                        {translations.brief}
                       </button>
                     </div>
                   )}
@@ -548,7 +550,7 @@ export default function RecipeDetailClient({
                       src={section.videoUrl}
                       className="w-full h-full absolute top-0 left-0 object-cover"
                     >
-                      Váš prohlížeč nepodporuje video tag.
+                      {translations.video_fallback}
                     </video>
                   </motion.div>
                 )}

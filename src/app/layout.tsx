@@ -6,6 +6,7 @@ import CookieConsentBanner from "@/components/CookieConsentBanner";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { languages } from '../i18n/settings';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,6 +24,9 @@ const playfairDisplay = Playfair_Display({
 export const metadata: Metadata = {
   title: "Moje Recepty - Tomáš Dinh",
   description: "Osobní sbírka oblíbených receptů.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -31,13 +35,19 @@ export const viewport: Viewport = {
 
 const GA_TRACKING_ID = "G-R9KE6X74Q9";
 
+export async function generateStaticParams() {
+  return languages.map((locale) => ({ locale }));
+}
+
 export default function RootLayout({
   children,
+  params: { locale },
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
   return (
-    <html lang="cs">
+    <html lang={locale} dir="ltr">
       <head>
         {/* Google Consent Mode v2 - Default Consent State */}
         <Script id="google-consent-init" strategy="beforeInteractive">
@@ -72,7 +82,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfairDisplay.variable} font-sans antialiased`}
       >
-        <LayoutClientWrapper>{children}</LayoutClientWrapper>
+        <LayoutClientWrapper locale={locale}>{children}</LayoutClientWrapper>
         <SpeedInsights />
         <Analytics />
         <CookieConsentBanner />

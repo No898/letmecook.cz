@@ -4,11 +4,16 @@ import { motion, useScroll, useSpring } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
+// Přidán typ pro props
+interface LayoutClientWrapperProps {
+  children: React.ReactNode;
+  locale: string; // Přidáno locale
+}
+
 export default function LayoutClientWrapper({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+  locale, // Přijetí locale
+}: LayoutClientWrapperProps) {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
