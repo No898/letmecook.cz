@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Deklarace gtag funkce pro TypeScript (pokud nemáte globální typy)
+// Deklarace gtag funkce pro TypeScript (opraveno)
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
