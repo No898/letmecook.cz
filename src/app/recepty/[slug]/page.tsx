@@ -10,13 +10,6 @@ import GsapScrollWrapper from "@/components/GsapScrollWrapper";
 import { recipes, Recipe as OriginalRecipeType } from "@/data/recipesData";
 // import { getRecipeData } from "@/lib/recipeLoader"; // Zakomentováno/nahrazeno
 
-// --- Definice standardního typu Props ---
-type Props = {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-// -------------------------------------
-
 // --- Struktura dat receptu - Odkomentováno a upraveno ---
 // Tato struktura definuje, jaká data očekáváme *v této komponentě*
 interface RecipeData {
@@ -78,12 +71,14 @@ async function getRecipeData(slug: string): Promise<RecipeData | null> {
 // ------------------------------------
 
 // --- Metadata pro <head> ---
+// Použití inline typování pro props s Promise podle Next.js 15+
 export async function generateMetadata(
-  { params }: Props,
+  { params }: { params: Promise<{ slug: string }> }, // Typ Promise<{ slug: string }>
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _parent: ResolvingMetadata // Přidán komentář pro ESLint
+  _parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const recipe = await getRecipeData(params.slug);
+  const { slug } = await params; // Použití await
+  const recipe = await getRecipeData(slug);
 
   if (!recipe) {
     return { title: "Recept nenalezen" };
@@ -115,15 +110,24 @@ export async function generateMetadata(
       authors: [recipe.authorName],
       url: `${
         process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz"
-      }/recepty/${params.slug}`, // Použit params.slug
+      }/recepty/${slug}`, // Použit slug z await params
     },
   };
 }
 // ---------------------------
 
 // --- Komponenta stránky ---
-export default async function RecipePage({ params }: Props) {
-  const recipe = await getRecipeData(params.slug);
+// Použití inline typování pro props s Promise podle Next.js 15+
+export default async function RecipePage({
+  params,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  searchParams, // Ignorujeme nepoužitou proměnnou pro ESLint
+}: {
+  params: Promise<{ slug: string }>; // Typ Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>; // Přidán searchParams
+}) {
+  const { slug } = await params; // Použití await
+  const recipe = await getRecipeData(slug);
 
   if (!recipe) {
     notFound();

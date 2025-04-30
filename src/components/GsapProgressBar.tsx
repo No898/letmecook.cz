@@ -6,7 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Props - očekáváme ref na kontejner, jehož scroll sledujeme
 interface GsapProgressBarProps {
-  target: React.RefObject<HTMLElement>;
+  // Povolíme i null, protože useRef může vrátit null
+  target: React.RefObject<HTMLElement | null>;
 }
 
 // Registrace pluginu - důležité udělat jen jednou
