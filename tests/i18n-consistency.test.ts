@@ -8,7 +8,7 @@ const otherLocales = ["en", "vi", "zh-TW"];
 const namespaces = ["common"]; // Začneme s 'common', můžeme přidat další
 
 // Funkce pro bezpečné načtení a parsování JSON souboru
-const loadJsonFile = (filePath: string): Record<string, any> | null => {
+const loadJsonFile = (filePath: string): Record<string, unknown> | null => {
   try {
     if (!fs.existsSync(filePath)) {
       console.error(`File not found: ${filePath}`);
@@ -25,58 +25,60 @@ const loadJsonFile = (filePath: string): Record<string, any> | null => {
 describe("i18n Translation Consistency", () => {
   namespaces.forEach((ns) => {
     describe(`Namespace: ${ns}`, () => {
-      const refFilePath = path.join(localesPath, referenceLocale, `${ns}.json`);
-      let referenceKeys: string[] = [];
-      let referenceData: Record<string, any> | null = null;
-
-      beforeAll(() => {
-        referenceData = loadJsonFile(refFilePath);
+      it(`should load reference locale file (${referenceLocale}/${ns}.json) and contain keys`, () => {
+        const refFilePath = path.join(
+          localesPath,
+          referenceLocale,
+          `${ns}.json`
+        );
+        const referenceData = loadJsonFile(refFilePath);
+        expect(referenceData).not.toBeNull();
         if (referenceData) {
-          // Získáme všechny klíče (i vnořené, pokud bychom chtěli, ale zde jen top-level)
-          referenceKeys = Object.keys(referenceData);
+          const keys = Object.keys(referenceData);
+          console.log(`Reference keys for ${ns}:`, keys);
+          expect(keys.length).toBeGreaterThan(0);
         }
       });
 
-      it(`should load reference locale file (${referenceLocale}/${ns}.json)`, () => {
-        expect(referenceData).not.toBeNull();
-        expect(referenceKeys.length).toBeGreaterThan(0); // Měl by mít nějaké klíče
-      });
+      otherLocales.forEach((locale) => {
+        it(`should have consistent keys and non-empty values for locale ${locale}`, () => {
+          const localeFilePath = path.join(localesPath, locale, `${ns}.json`);
+          const localeData = loadJsonFile(localeFilePath);
 
-      if (referenceData) {
-        // Pokračujeme jen pokud se referenční soubor načetl
-        otherLocales.forEach((locale) => {
-          describe(`Locale: ${locale}`, () => {
-            const localeFilePath = path.join(localesPath, locale, `${ns}.json`);
-            let localeData: Record<string, any> | null = null;
+          const refFilePath = path.join(
+            localesPath,
+            referenceLocale,
+            `${ns}.json`
+          );
+          const referenceDataNow = loadJsonFile(refFilePath);
+          const referenceKeysNow = referenceDataNow
+            ? Object.keys(referenceDataNow)
+            : [];
 
-            beforeAll(() => {
-              localeData = loadJsonFile(localeFilePath);
-            });
+          expect(localeData).not.toBeNull();
+          if (!localeData) return;
 
-            it(`should load translation file (${locale}/${ns}.json)`, () => {
-              expect(localeData).not.toBeNull();
-            });
+          expect(referenceKeysNow.length).toBeGreaterThan(0);
+          if (referenceKeysNow.length === 0) return;
 
-            if (localeData) {
-              // Pokračujeme jen pokud se soubor načetl
-              referenceKeys.forEach((key) => {
-                it(`should contain key "${key}" and have a non-empty value`, () => {
-                  // 1. Klíč musí existovat
-                  expect(localeData).toHaveProperty(key);
-
-                  // 2. Hodnota nesmí být null, undefined nebo prázdný string
-                  const value = localeData![key]; // Víme, že existuje z předchozího expect
-                  expect(value).not.toBeNull();
-                  expect(value).not.toBeUndefined();
-                  expect(value).not.toBe("");
-                  // Můžeme přidat i kontrolu, že je to string, pokud je to potřeba
-                  // expect(typeof value).toBe('string');
-                });
-              });
+          const errors: string[] = [];
+          referenceKeysNow.forEach(key => {
+            if (!Object.prototype.hasOwnProperty.call(localeData, key)) {
+              errors.push(`Missing key: "${key}"`);
+            } else {
+              const value = localeData![key];
+              if (value === null || value === undefined) {
+                errors.push(`Key "${key}" value is null or undefined`);
+              } else if (typeof value !== 'string') {
+                errors.push(`Key "${key}" value is not a string (type: ${typeof value})`);
+              } else if (value.length === 0) {
+                errors.push(`Key "${key}" value is an empty string`);
+              }
             }
           });
+          expect(errors).toEqual([]);
         });
-      }
+      });
     });
   });
 });

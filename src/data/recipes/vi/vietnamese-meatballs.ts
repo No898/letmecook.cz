@@ -2,8 +2,8 @@ import type { Recipe } from "@/types/recipe";
 
 export const recipe: Recipe = {
   id: "vietnamese-meatballs",
-  title: "Thịt viên kiểu Việt Nam chuẩn vị Hà Nội: Công thức nhà làm",
-  imageUrl: "/images/vietnamese-meatballs.webp", // Stays the same
+  title: "Thịt viên chiên kiểu Hà Nội",
+  imageUrl: "/images/vietnamese-meatballs.webp",
   description:
     "Thịt viên chiên kiểu Việt Nam đã sẵn sàng để thưởng thức. Theo truyền thống, món này không dùng vụn bánh mì hay trứng. Độ kết dính đến từ tinh bột và thịt được trộn kỹ.",
   ingredients: [

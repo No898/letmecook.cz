@@ -42,7 +42,7 @@ export default function HomePageHeader({
     // Získání rozměrů kontejneru pro výpočet středu a poloměru
     const headerWidth = headerElement.offsetWidth;
     const radiusX = headerWidth * 0.7; // Použijeme poslední hodnoty poloměrů
-    const radiusY = 250;
+    const radiusY = 150;
     const centerX = 0;
     const centerY = 0;
 

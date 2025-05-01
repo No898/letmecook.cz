@@ -16,7 +16,7 @@
   "detailed": "Detailed",
   "brief": "Brief",
   "video_fallback": "Your browser does not support the video tag.",
-  
+
   "recipe_not_found": "Recipe not found",
   "page_title_suffix": " | Tomáš Dinh's Recipes",
 
@@ -26,4 +26,4 @@
   "recipe.instructions": "Instructions",
   "recipe.description": "Description",
   "home.title": "My Recipes"
-} 
+}
