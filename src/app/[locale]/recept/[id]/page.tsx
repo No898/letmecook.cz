@@ -5,10 +5,6 @@ import { languages, fallbackLng } from "@/i18n/settings";
 import type { Recipe } from "@/types/recipe"; // Aktualizovaný import
 import fs from "fs/promises"; // Import pro práci se soubory
 import path from "path"; // Import pro práci s cestami
-import { i18n as I18nInstanceType } from 'i18next'; // Import typu
-
-interface RecipePageParams { locale: string; id: string; }
-interface RecipePageProps { params: RecipePageParams; }
 
 // Pomocná funkce pro načtení receptu
 // Přijímá přímo locale a id
@@ -26,7 +22,6 @@ async function loadRecipe(locale: string, id: string): Promise<Recipe | null> {
 // Pomocná funkce pro získání překladů UI
 // Přijímá přímo locale
 async function getUiTranslations(locale: string): Promise<Record<string, string>> {
-    // const { locale } = params; // Odstraněno - locale přichází jako argument
     const i18nextInstance = await initI18nextInstance(locale, 'common');
     const t: TFunction = i18nextInstance.getFixedT(locale, 'common');
     return {
@@ -45,8 +40,10 @@ async function getUiTranslations(locale: string): Promise<Record<string, string>
     };
 }
 
-// Funkce pro generování metadat
-export async function generateMetadata({ params }: RecipePageProps): Promise<{ title: string; description?: string }> {
+// Funkce pro generování metadat - upravená signatura
+export async function generateMetadata(
+    { params }: { params: Promise<{ locale: string; id: string }> }
+): Promise<{ title: string; description?: string }> {
     // Nejprve await params a pak destrukturace
     const { locale, id } = await params;
     // Předáme rozparsované locale a id do pomocných funkcí
@@ -64,8 +61,10 @@ export async function generateMetadata({ params }: RecipePageProps): Promise<{ t
     };
 }
 
-// Hlavní komponenta stránky
-export default async function RecipePage({ params }: RecipePageProps) {
+// Hlavní komponenta stránky - upravená signatura
+export default async function RecipePage(
+    { params }: { params: Promise<{ locale: string; id: string }> }
+) {
     // Nejprve await params a pak destrukturace
     const { locale, id } = await params;
 

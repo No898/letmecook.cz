@@ -8,13 +8,6 @@ import { initI18nextInstance } from "@/i18n"; // Import naší inicializační f
 import HomePageHeader from "@/components/HomePageHeader"; // Import nové komponenty
 import { languages } from "@/i18n/settings"; // Import seznamu jazyků
 
-// Parametry stránky (včetně locale)
-interface HomePageProps {
-    params: {
-        locale: string;
-    };
-}
-
 // Pomocná funkce pro načtení receptů
 async function loadRecipes(locale: string): Promise<Recipe[]> {
     try {
@@ -43,8 +36,12 @@ async function loadRecipes(locale: string): Promise<Recipe[]> {
     }
 }
 
-// Hlavní komponenta stránky
-export default async function HomePage({ params }: HomePageProps) {
+// Hlavní komponenta stránky - upravená signatura
+export default async function HomePage({
+    params
+}: {
+    params: Promise<{ locale: string }>
+}) {
     // Nejprve await params a pak destrukturace
     const { locale } = await params;
 

@@ -142,7 +142,7 @@ export default function HomePageClient({ recipes, locale }: HomePageClientProps)
                             {recipe.imageUrl && (
                                 <div className="aspect-video relative overflow-hidden group">
                                     {flagSrc && (
-                                        <div className="origin-flag absolute bottom-0 left-2 z-10 w-16 h-16 md:w-20 md:h-20 pointer-events-none">
+                                        <div className="origin-flag absolute bottom-0 left-1 z-10 w-16 h-16 md:w-20 md:h-20 pointer-events-none">
                                             <Image
                                                 src={flagSrc}
                                                 alt={`Vlajka ${recipe.originCountryCode}`}
