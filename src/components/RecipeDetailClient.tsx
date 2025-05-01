@@ -203,11 +203,6 @@ export default function RecipeDetailClient({
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif mb-4">
           {recipe.title}
         </h1>
-        {recipe.nationalTitle && (
-          <h2 className="text-2xl sm:text-3xl text-gray-400 font-serif mb-8">
-            {recipe.nationalTitle}
-          </h2>
-        )}
       </div>
 
       <div

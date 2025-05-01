@@ -6,7 +6,7 @@ import CookieConsentBanner from "@/components/CookieConsentBanner";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { languages } from '../i18n/settings';
+import { languages } from "../i18n/settings";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,7 +22,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Moje Recepty - Tomáš Dinh",
+  title: "Moje kniha receptů",
   description: "Osobní sbírka oblíbených receptů.",
   icons: {
     icon: "/favicon.svg",

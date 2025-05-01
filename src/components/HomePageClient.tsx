@@ -176,11 +176,7 @@ export default function HomePageClient({
                 <h2 className="text-xl lg:text-2xl font-semibold font-serif mb-2 group-hover:text-accent transition-colors duration-200">
                   {recipe.title}
                 </h2>
-                {recipe.nationalTitle && (
-                  <h3 className="text-base lg:text-lg text-gray-400 mb-3">
-                    {recipe.nationalTitle}
-                  </h3>
-                )}
+             
                 <p className="text-sm text-gray-300 line-clamp-3 hidden md:block">
                   {recipe.description}
                 </p>
