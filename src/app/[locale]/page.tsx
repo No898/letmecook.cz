@@ -62,7 +62,7 @@ export default async function HomePage({
 
     return (
         // Hlavní kontejner zůstává flex-col
-        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-16"> {/* Přidán space-y pro mezery */}
+        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8"> {/* Přidán space-y pro mezery */}
 
             {/* Horní mřížka receptů (první 3) */}
             {topRecipes.length > 0 && (

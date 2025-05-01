@@ -4,7 +4,7 @@ export const recipe: Recipe = {
     id: "vietnamese-meatballs",
     title:
         "道地越南肉丸 (Thịt viên) – 河內家常食譜",
-    vietnameseTitle: "Thịt viên", // Vietnamese title remains the same
+        nationalTitle: "Thịt viên", // Vietnamese title remains the same
     imageUrl: "/images/vietnamese-meatballs.webp", // Stays the same
     description:
         "準備上桌的越式炸肉丸 (thịt viên)。傳統做法不含麵包屑或雞蛋——黏稠度來自澱粉和充分混合的肉。",

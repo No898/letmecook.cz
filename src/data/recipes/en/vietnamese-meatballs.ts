@@ -4,7 +4,7 @@ export const recipe: Recipe = {
     id: "vietnamese-meatballs",
     title:
         "Authentic Vietnamese Meatballs (Thịt viên) – Homemade Hanoi Recipe",
-    vietnameseTitle: "Thịt viên", // Stays the same
+    nationalTitle: "Thịt viên", // Stays the same
     imageUrl: "/images/vietnamese-meatballs.webp", // Stays the same
     description:
         "Vietnamese fried meatballs (thịt viên) ready to be served. Traditionally, they don't contain breadcrumbs or eggs – cornstarch and well-mixed meat provide cohesion.",

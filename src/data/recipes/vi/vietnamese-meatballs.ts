@@ -4,7 +4,7 @@ export const recipe: Recipe = {
     id: "vietnamese-meatballs",
     title:
         "Thịt viên kiểu Việt Nam chuẩn vị Hà Nội – Công thức nhà làm",
-    vietnameseTitle: "Thịt viên", // Vietnamese title remains the same
+        nationalTitle: "Thịt viên", // Vietnamese title remains the same
     imageUrl: "/images/vietnamese-meatballs.webp", // Stays the same
     description:
         "Thịt viên chiên kiểu Việt Nam đã sẵn sàng để thưởng thức. Theo truyền thống, món này không dùng vụn bánh mì hay trứng – độ kết dính đến từ tinh bột và thịt được trộn kỹ.",

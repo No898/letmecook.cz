@@ -22,7 +22,7 @@ export interface RecipeTip {
 export interface Recipe {
     id: string;
     title: string;
-    vietnameseTitle?: string;
+    nationalTitle?: string;
     imageUrl?: string;
     description: string;
     ingredients: RecipeIngredientSection[];

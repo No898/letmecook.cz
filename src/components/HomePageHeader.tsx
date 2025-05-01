@@ -116,7 +116,7 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
     };
 
     return (
-        <div ref={headerRef} className="relative flex flex-col items-center mb-12">
+        <div ref={headerRef} className="relative flex flex-col items-center ">
             {/* Nadpis ... */}
             <motion.h1
                 className="text-4xl md:text-6xl font-bold mb-4 font-serif text-center cursor-pointer"

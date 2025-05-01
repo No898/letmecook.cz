@@ -4,7 +4,7 @@ export const recipe: Recipe = {
     id: "vietnamese-meatballs",
     title:
         "Autentické vietnamské masové kuličky (Thịt viên) – domácí recept z Hanoje",
-    vietnameseTitle: "Thịt viên",
+    nationalTitle: "Thịt viên",
     imageUrl: "/images/vietnamese-meatballs.webp",
     description:
         "Vietnamské smažené masové kuličky thịt viên připravené k podávání. Tradičně neobsahují strouhanku ani vejce – soudržnost zajišťuje škrob a dobře promíchané maso.",

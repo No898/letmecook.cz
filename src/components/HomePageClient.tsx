@@ -18,13 +18,10 @@ const countryFlags: { [key: string]: string } = {
     'gb': '/images/uk flag.webp',
 };
 
-// Typ pro listenery ukládané na element
 interface FlagListeners {
     showFlag: () => void;
     hideFlag: () => void;
 }
-
-// Rozšíření globálního HTMLElement pro typovou kontrolu
 declare global {
     interface HTMLElement {
         __flagListeners?: FlagListeners;
@@ -50,13 +47,17 @@ export default function HomePageClient({ recipes, locale }: HomePageClientProps)
     };
 
     useEffect(() => {
+        if (window.innerWidth < 768) {
+            return;
+        }
+
         const cards = containerRef.current?.querySelectorAll<HTMLDivElement>(".recipe-card");
         if (!cards) return;
 
         const animations: gsap.core.Tween[] = [];
 
         cards.forEach(card => {
-            const flag = card.querySelector<HTMLImageElement>(".origin-flag");
+            const flag = card.querySelector<HTMLDivElement>(".origin-flag");
             if (!flag) return;
 
             gsap.set(flag, {
@@ -98,18 +99,16 @@ export default function HomePageClient({ recipes, locale }: HomePageClientProps)
             card.addEventListener('mouseenter', showFlag);
             card.addEventListener('mouseleave', hideFlag);
 
-            // Přidání listenerů s typovou kontrolou
             card.__flagListeners = { showFlag, hideFlag };
         });
 
         return () => {
-            cards.forEach(card => {
-                // Přístup k listenerům s typovou kontrolou
+            cards?.forEach(card => {
                 const listeners = card.__flagListeners;
                 if (listeners) {
                     card.removeEventListener('mouseenter', listeners.showFlag);
                     card.removeEventListener('mouseleave', listeners.hideFlag);
-                    delete card.__flagListeners; // Volitelně odebrat vlastnost
+                    delete card.__flagListeners;
                 }
             });
             animations.forEach(anim => anim.kill());
@@ -166,12 +165,12 @@ export default function HomePageClient({ recipes, locale }: HomePageClientProps)
                                 <h2 className="text-xl lg:text-2xl font-semibold font-serif mb-2 group-hover:text-accent transition-colors duration-200">
                                     {recipe.title}
                                 </h2>
-                                {recipe.vietnameseTitle && (
+                                {recipe.nationalTitle && (
                                     <h3 className="text-base lg:text-lg text-gray-500 dark:text-gray-400 mb-3">
-                                        {recipe.vietnameseTitle}
+                                        {recipe.nationalTitle}
                                     </h3>
                                 )}
-                                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
+                                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 hidden md:block">
                                     {recipe.description}
                                 </p>
                             </div>
