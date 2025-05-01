@@ -1,7 +1,7 @@
 import type { Recipe } from "@/types/recipe";
 
 export const recipe: Recipe = {
-  id: "czech-potato-goulash", // Consistent ID
+  id: "czech-burtgulas", // Consistent ID
   title: "捷克家常馬鈴薯燉肉 (Buřtguláš)",
   imageUrl: "/images/czech-burtgulas.webp",
   description:
