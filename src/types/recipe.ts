@@ -43,4 +43,5 @@ export interface Recipe {
     recipeCategory?: string; // Kategorie (např. "Hlavní chod")
     recipeCuisine?: string; // Kuchyně (např. "Vietnamská")
     keywords?: string; // Klíčová slova oddělená čárkou
+    originCountryCode?: string; // Kód země původu receptu (např. 'vi', 'cz')
 } 

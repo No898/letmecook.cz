@@ -21,7 +21,7 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
     const itemsRef = useRef<(HTMLDivElement | null)[]>([]); // Ref pro obalovací divy obrázků
     const tl = useRef<gsap.core.Timeline | null>(null);
 
-    // Mapování jazyků na obrázky
+    // Přejmenováno zpět na langImages
     const langImages: { [key: string]: string } = {
         'cs': '/images/knedlo-vepro-zelo.webp',
         'en': '/images/fish-and-chips.webp',
@@ -35,37 +35,30 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
 
         // Získání rozměrů kontejneru pro výpočet středu a poloměru
         const headerWidth = headerElement.offsetWidth;
-        const radiusX = headerWidth * 0.7; // Poloměr X zůstává závislý na šířce
-        const radiusY = 250; // Další zvětšení vertikálního poloměru
+        const radiusX = headerWidth * 0.7; // Použijeme poslední hodnoty poloměrů
+        const radiusY = 250;
         const centerX = 0;
-        const centerY = 0; // Výraznější posun středu dolů
+        const centerY = 0;
 
         // Inicializace timeline
         tl.current = gsap.timeline({ paused: true, reversed: true });
 
-        // Animace pro ikony jídel - nyní pro všechny 4
-        const angleStep = (Math.PI * 2) / languages.length; // Dělíme počtem všech jazyků (4)
+        // Animace pro ikony jídel
+        const angleStep = (Math.PI * 2) / languages.length;
 
-        // Původní smyčka forEach odstraněna - logika přesunuta do delayedCall
-        /*
-        itemsRef.current = []; // Vyčistíme ref pole před naplněním
-        languages.forEach((lang, index) => {
-            // ... (kód pro výpočet pozic zde byl, ale už se nepoužívá)
-        });
-        */
-
-        // ---- RESTRUKTURACE ----
-        // GSAP animace spustíme až zde, když jsou elementy vyrenderovány
-        gsap.delayedCall(0, () => { // Malé zpoždění pro jistotu
+        // Vrácena restrukturalizace - GSAP se spouští po renderu
+        gsap.delayedCall(0, () => {
             const renderedItems = headerElement.querySelectorAll<HTMLDivElement>(".language-icon-container");
+            itemsRef.current = Array.from(renderedItems); // Uložíme refy hned
+
             renderedItems.forEach((itemContainer, index) => {
-                if (!itemContainer) return; // Jistota
+                if (!itemContainer) return;
                 const initialAngle = index * angleStep;
                 const randomRadiusMultiplier = 0.85 + Math.random() * 0.3;
-
                 const initialX = centerX + Math.cos(initialAngle) * radiusX * randomRadiusMultiplier;
                 const initialY = centerY + Math.sin(initialAngle) * radiusY * randomRadiusMultiplier;
 
+                // Vráceno nastavení opacity/scale + pozice v GSAP
                 gsap.set(itemContainer, {
                     opacity: 0,
                     scale: 0,
@@ -73,6 +66,7 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
                     y: initialY
                 });
 
+                // Animace objevení
                 tl.current?.to(itemContainer, {
                     opacity: 1,
                     scale: 1,
@@ -80,6 +74,7 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
                     ease: 'back.out(1.7)',
                 }, 0);
 
+                // Orbitální animace
                 const rotationSpeed = (1 + Math.random() * 0.5) * (Math.random() < 0.5 ? 1 : -1);
                 gsap.to({ angle: initialAngle }, {
                     angle: initialAngle + (Math.PI * 2 * rotationSpeed),
@@ -95,26 +90,23 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
                     }
                 });
             });
-            // Uložíme reference pro cleanup
-            itemsRef.current = Array.from(renderedItems);
         });
-        // ---- KONEC RESTRUKTURACE ----
 
+        // Funkce a listenery pro zobrazení/skrytí ikon na hover nadpisu
         const playAnim = () => tl.current?.play();
         const reverseAnim = () => tl.current?.reverse();
-
         headerElement.addEventListener('mouseenter', playAnim);
         headerElement.addEventListener('mouseleave', reverseAnim);
 
+        // Cleanup
         return () => {
             headerElement.removeEventListener('mouseenter', playAnim);
             headerElement.removeEventListener('mouseleave', reverseAnim);
             tl.current?.kill();
-            // Cleanup pro dynamicky přidané tweens
+            // Kill orbitálních animací
             itemsRef.current.forEach(item => item && gsap.killTweensOf(item));
         };
 
-        // Změna závislosti - chceme resetovat pozice při změně locale
     }, [locale, languages.length]);
 
     const handleItemClick = (targetLocale: string) => {
@@ -123,12 +115,11 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
         router.push(newPath);
     };
 
-
     return (
-        <div ref={headerRef} className="relative flex flex-col items-center mb-12"> {/* Kontejner pro hover */}
-            {/* Nadpis s animací (framer-motion) */}
+        <div ref={headerRef} className="relative flex flex-col items-center mb-12">
+            {/* Nadpis ... */}
             <motion.h1
-                className="text-4xl md:text-6xl font-bold mb-4 font-serif text-center cursor-default" // Přidán cursor
+                className="text-4xl md:text-6xl font-bold mb-4 font-serif text-center cursor-pointer"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -136,19 +127,17 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
                 {title}
             </motion.h1>
 
-            {/* Ikony jídel - absolutně pozicované - nyní iterujeme přes VŠECHNY jazyky */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2">
-                {languages.map((lang) => { // Odstraněn nepoužívaný 'index'
+            {/* Ikony jídel (přepínač jazyků) */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-10">
+                {languages.map((lang) => {
                     const imgSrc = langImages[lang];
                     if (!imgSrc) return null;
-
                     return (
-                        <div // Obalovací div pro GSAP transformace
+                        <div
                             key={lang}
-                            // Odstraněno přiřazení ref zde, řešíme přes querySelectorAll
-                            // ref={el => { itemsRef.current[index] = el; }}
-                            className="language-icon-container absolute cursor-pointer group" // Přidána třída pro selekci
-                            style={{ width: '120px', height: '120px' }}
+                            className="language-icon-container absolute cursor-pointer group"
+                            // Vráceny inline styly pro počáteční skrytí
+                            style={{ width: '120px', height: '120px', opacity: 0, transform: 'scale(0)' }}
                             onClick={() => handleItemClick(lang)}
                             title={`Přepnout na ${lang.toUpperCase()}`}
                         >
@@ -164,8 +153,7 @@ export default function HomePageHeader({ title, instagramUrl, emailAddress, loca
                 })}
             </div>
 
-
-            {/* Sekce s kontakty s animací (framer-motion) */}
+            {/* Sekce s kontakty ... */}
             <motion.div
                 className="flex items-center space-x-4 mt-4" // Zvýšený margin top
                 initial={{ opacity: 0, y: 10 }}

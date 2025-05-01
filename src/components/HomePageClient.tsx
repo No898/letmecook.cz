@@ -3,14 +3,37 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import type { Recipe } from "@/types/recipe"; // Aktualizovaný import
+import type { Recipe } from "@/types/recipe";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
 
 interface HomePageClientProps {
     recipes: Recipe[];
     locale: string;
 }
 
+const countryFlags: { [key: string]: string } = {
+    'vi': '/images/vietnamese flag.webp',
+    'cz': '/images/czech flag.webp',
+    'gb': '/images/uk flag.webp',
+};
+
+// Typ pro listenery ukládané na element
+interface FlagListeners {
+    showFlag: () => void;
+    hideFlag: () => void;
+}
+
+// Rozšíření globálního HTMLElement pro typovou kontrolu
+declare global {
+    interface HTMLElement {
+        __flagListeners?: FlagListeners;
+    }
+}
+
 export default function HomePageClient({ recipes, locale }: HomePageClientProps) {
+    const containerRef = useRef<HTMLDivElement>(null);
+
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -26,54 +49,136 @@ export default function HomePageClient({ recipes, locale }: HomePageClientProps)
         visible: { y: 0, opacity: 1 },
     };
 
+    useEffect(() => {
+        const cards = containerRef.current?.querySelectorAll<HTMLDivElement>(".recipe-card");
+        if (!cards) return;
+
+        const animations: gsap.core.Tween[] = [];
+
+        cards.forEach(card => {
+            const flag = card.querySelector<HTMLImageElement>(".origin-flag");
+            if (!flag) return;
+
+            gsap.set(flag, {
+                opacity: 0,
+                scale: 0.8,
+                x: '-100%',
+                y: '-20%',
+                rotation: -45,
+                transformOrigin: 'bottom right'
+            });
+
+            const showTween = gsap.to(flag, {
+                paused: true,
+                opacity: 1,
+                scale: 1,
+                x: '0%',
+                y: '0%',
+                rotation: 0,
+                duration: 0.4,
+                ease: 'power3.out'
+            });
+
+            const hideTween = gsap.to(flag, {
+                paused: true,
+                opacity: 0,
+                scale: 0.8,
+                x: '-100%',
+                y: '-20%',
+                rotation: -45,
+                duration: 0.3,
+                ease: 'power2.in'
+            });
+
+            animations.push(showTween, hideTween);
+
+            const showFlag = () => { hideTween.pause(); showTween.restart(); };
+            const hideFlag = () => { showTween.pause(); hideTween.restart(); };
+
+            card.addEventListener('mouseenter', showFlag);
+            card.addEventListener('mouseleave', hideFlag);
+
+            // Přidání listenerů s typovou kontrolou
+            card.__flagListeners = { showFlag, hideFlag };
+        });
+
+        return () => {
+            cards.forEach(card => {
+                // Přístup k listenerům s typovou kontrolou
+                const listeners = card.__flagListeners;
+                if (listeners) {
+                    card.removeEventListener('mouseenter', listeners.showFlag);
+                    card.removeEventListener('mouseleave', listeners.hideFlag);
+                    delete card.__flagListeners; // Volitelně odebrat vlastnost
+                }
+            });
+            animations.forEach(anim => anim.kill());
+        };
+
+    }, [recipes]);
+
     return (
         <motion.div
+            ref={containerRef}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 w-full max-w-7xl"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
         >
-            {recipes.map((recipe, index) => (
-                <motion.div
-                    key={recipe.id}
-                    variants={itemVariants}
-                    whileHover={{
-                        scale: 1.03,
-                        boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
-                    }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className="block bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-lg overflow-hidden cursor-pointer group"
-                >
-                    {/* Link nyní obsahuje locale */}
-                    <Link href={`/${locale}/recept/${recipe.id}`} className="block">
-                        {recipe.imageUrl && (
-                            <div className="aspect-video relative overflow-hidden">
-                                <Image
-                                    src={recipe.imageUrl}
-                                    alt={recipe.title} // Zvážit předání přeloženého alt textu
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                    priority={index < 3} // Priorita pro LCP
-                                />
-                            </div>
-                        )}
-                        <div className="p-5">
-                            <h2 className="text-xl lg:text-2xl font-semibold font-serif mb-2 group-hover:text-accent transition-colors duration-200">
-                                {recipe.title}
-                            </h2>
-                            {recipe.vietnameseTitle && (
-                                <h3 className="text-base lg:text-lg text-gray-500 dark:text-gray-400 mb-3">
-                                    {recipe.vietnameseTitle}
-                                </h3>
+            {recipes.map((recipe, index) => {
+                const flagSrc = recipe.originCountryCode ? countryFlags[recipe.originCountryCode] : null;
+                return (
+                    <motion.div
+                        key={recipe.id}
+                        variants={itemVariants}
+                        whileHover={{
+                            scale: 1.03,
+                            boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
+                        }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        className="recipe-card block bg-white dark:bg-gray-800 rounded-xl shadow-md dark:shadow-lg overflow-hidden cursor-pointer group relative"
+                    >
+                        <Link href={`/${locale}/recept/${recipe.id}`} className="block">
+                            {recipe.imageUrl && (
+                                <div className="aspect-video relative overflow-hidden group">
+                                    {flagSrc && (
+                                        <div className="origin-flag absolute bottom-0 left-2 z-10 w-16 h-16 md:w-20 md:h-20 pointer-events-none">
+                                            <Image
+                                                src={flagSrc}
+                                                alt={`Vlajka ${recipe.originCountryCode}`}
+                                                fill
+                                                sizes="80px"
+                                                className="object-contain rounded-sm"
+                                            />
+                                        </div>
+                                    )}
+                                    <Image
+                                        src={recipe.imageUrl}
+                                        alt={recipe.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        priority={index < 3}
+                                    />
+                                </div>
                             )}
-                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-                                {recipe.description}
-                            </p>
-                        </div>
-                    </Link>
-                </motion.div>
-            ))}
+                            <div className="p-5">
+                                <h2 className="text-xl lg:text-2xl font-semibold font-serif mb-2 group-hover:text-accent transition-colors duration-200">
+                                    {recipe.title}
+                                </h2>
+                                {recipe.vietnameseTitle && (
+                                    <h3 className="text-base lg:text-lg text-gray-500 dark:text-gray-400 mb-3">
+                                        {recipe.vietnameseTitle}
+                                    </h3>
+                                )}
+                                <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
+                                    {recipe.description}
+                                </p>
+                            </div>
+                        </Link>
+                    </motion.div>
+                );
+            })}
         </motion.div>
     );
 } 

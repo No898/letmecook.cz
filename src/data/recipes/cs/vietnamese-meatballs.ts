@@ -113,5 +113,6 @@ export const recipe: Recipe = {
     recipeCategory: "Hlavní chod",
     recipeCuisine: "Vietnamská",
     keywords:
-        "vietnamské masové kuličky, thịt viên, vepřové mleté maso, recept, rybí omáčka, nước chấm, smažené kuličky, vietnamská kuchyně, hanoj",
+        "vietnamské masové kuličky, thịt viên, vepřové mleté maso, recept, rybí omáčka, nước chấm, smažené kuličky, vietnamská kuchyně, hanoj, vietnamské karbanátky, bún chả, letní rolky",
+    originCountryCode: 'vi'
 }; 

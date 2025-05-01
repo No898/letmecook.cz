@@ -1,4 +1,5 @@
-import HomePageClient from "@/components/HomePageClient"; // Naše Client Component
+import HomePageClient from "@/components/HomePageClient"; // Zpět k původní komponentě
+// import RecipeCarousel from "@/components/RecipeCarousel"; // Odstraněn import karuselu
 // import { FaInstagram, FaEnvelope } from "react-icons/fa"; // Odstraněno - přesunuto do HomePageHeader
 import { Recipe } from "@/types/recipe"; // Aktualizovaný import
 import fs from "fs/promises"; // Import pro práci se soubory
