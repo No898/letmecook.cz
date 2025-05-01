@@ -1,7 +1,7 @@
 import type { Recipe } from "@/types/recipe";
 
 export const recipe: Recipe = {
-  id: "cesky-burt-gulas",
+  id: "czech-burtgulas",
   title: "Český domácí buřtguláš",
   imageUrl: "/images/czech-burtgulas.webp",
   description:
