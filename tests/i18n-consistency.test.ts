@@ -62,15 +62,17 @@ describe("i18n Translation Consistency", () => {
           if (referenceKeysNow.length === 0) return;
 
           const errors: string[] = [];
-          referenceKeysNow.forEach(key => {
+          referenceKeysNow.forEach((key) => {
             if (!Object.prototype.hasOwnProperty.call(localeData, key)) {
               errors.push(`Missing key: "${key}"`);
             } else {
               const value = localeData![key];
               if (value === null || value === undefined) {
                 errors.push(`Key "${key}" value is null or undefined`);
-              } else if (typeof value !== 'string') {
-                errors.push(`Key "${key}" value is not a string (type: ${typeof value})`);
+              } else if (typeof value !== "string") {
+                errors.push(
+                  `Key "${key}" value is not a string (type: ${typeof value})`
+                );
               } else if (value.length === 0) {
                 errors.push(`Key "${key}" value is an empty string`);
               }
