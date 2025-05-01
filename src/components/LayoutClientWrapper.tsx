@@ -12,7 +12,6 @@ interface LayoutClientWrapperProps {
 
 export default function LayoutClientWrapper({
   children,
-  locale, // Přijetí locale
 }: LayoutClientWrapperProps) {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {

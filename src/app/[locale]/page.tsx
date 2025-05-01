@@ -5,6 +5,7 @@ import fs from "fs/promises"; // Import pro práci se soubory
 import path from "path"; // Import pro práci s cestami
 import { initI18nextInstance } from "@/i18n"; // Import naší inicializační funkce
 import HomePageHeader from "@/components/HomePageHeader"; // Import nové komponenty
+import { languages } from "@/i18n/settings"; // Import seznamu jazyků
 
 // Parametry stránky (včetně locale)
 interface HomePageProps {
@@ -41,7 +42,7 @@ async function loadRecipes(locale: string): Promise<Recipe[]> {
     }
 }
 
-// Přijímáme celé props
+// Hlavní komponenta stránky
 export default async function HomePage({ params }: HomePageProps) {
     // Nejprve await params a pak destrukturace
     const { locale } = await params;
@@ -52,22 +53,37 @@ export default async function HomePage({ params }: HomePageProps) {
     // Používáme 'locale' místo 'currentLocale'
     const { t } = await initI18nextInstance(locale, 'common');
 
-    const localizedRecipes = await loadRecipes(locale);
+    const allLocalizedRecipes = await loadRecipes(locale);
+
+    // Rozdělení receptů
+    const topRecipes = allLocalizedRecipes.slice(0, 3);
+    const bottomRecipes = allLocalizedRecipes.slice(3);
 
     const instagramUrl = "https://www.instagram.com/thepiggie/";
     const emailAddress = "hello@tomasdinh.cz";
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24">
-            {/* Vložení nové Client Component pro hlavičku */}
+        // Hlavní kontejner zůstává flex-col
+        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-16"> {/* Přidán space-y pro mezery */}
+
+            {/* Horní mřížka receptů (první 3) */}
+            {topRecipes.length > 0 && (
+                <HomePageClient recipes={topRecipes} locale={locale} />
+            )}
+
+            {/* Střední část - Záhlaví (název a odkazy) */}
             <HomePageHeader
-                title={t('home.title')} // Předání přeloženého titulku
+                title={t('home.title')}
                 instagramUrl={instagramUrl}
                 emailAddress={emailAddress}
+                locale={locale}
+                languages={languages} // languages je potřeba naimportovat nebo získat jinak
             />
 
-            {/* Předání locale do klienta */}
-            <HomePageClient recipes={localizedRecipes} locale={locale} />
+            {/* Dolní mřížka receptů (zbytek) */}
+            {bottomRecipes.length > 0 && (
+                <HomePageClient recipes={bottomRecipes} locale={locale} />
+            )}
         </main>
     );
 }
