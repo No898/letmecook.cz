@@ -146,7 +146,7 @@ export default function HomePageClient({
               boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.1)",
             }}
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="recipe-card block bg-gray-800 rounded-xl shadow-lg overflow-hidden cursor-pointer group relative"
+            className="recipe-card relative z-0 block bg-gray-800 rounded-xl shadow-lg overflow-hidden cursor-pointer group"
           >
             <Link href={`/${locale}/recept/${recipe.id}`} className="block">
               {recipe.imageUrl && (
@@ -176,7 +176,7 @@ export default function HomePageClient({
                 <h2 className="text-xl lg:text-2xl font-semibold font-serif mb-2 group-hover:text-accent transition-colors duration-200">
                   {recipe.title}
                 </h2>
-             
+
                 <p className="text-sm text-gray-300 line-clamp-3 hidden md:block">
                   {recipe.description}
                 </p>

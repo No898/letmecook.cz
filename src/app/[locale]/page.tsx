@@ -53,9 +53,15 @@ export default async function HomePage({
 
     const allLocalizedRecipes = await loadRecipes(locale);
 
-    // Rozdělení receptů
-    const topRecipes = allLocalizedRecipes.slice(0, 3);
-    const bottomRecipes = allLocalizedRecipes.slice(3);
+    // --- Start Modification: Remove translations object creation ---
+    /*
+    const translations = {
+        hover_title_hint: t('hover_title_hint'), // Klíč pro desktop hint
+        click_title_hint: t('click_title_hint')  // Klíč pro mobile hint
+        // Přidej sem další klíče, pokud jsou potřeba
+    };
+    */
+    // --- End Modification ---
 
     const instagramUrl = "https://www.instagram.com/thepiggie/";
     const emailAddress = "hello@tomasdinh.cz";
@@ -64,26 +70,23 @@ export default async function HomePage({
         // Hlavní kontejner zůstává flex-col
         <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8"> {/* Přidán space-y pro mezery */}
 
-            {/* Horní mřížka receptů (první 3) */}
-            {topRecipes.length > 0 && (
-                <HomePageClient recipes={topRecipes} locale={locale} />
-            )}
-
             {/* Střední část - Záhlaví (název a odkazy) */}
-            <HomePageHeader
-                title={t('home.title')}
-                instagramUrl={instagramUrl}
-                emailAddress={emailAddress}
-                locale={locale}
-                languages={languages} // languages je potřeba naimportovat nebo získat jinak
-            />
+            <div className="relative z-50 order-first md:order-none w-full flex justify-center isolate">
+                <HomePageHeader
+                    title={t('home.title')}
+                    instagramUrl={instagramUrl}
+                    emailAddress={emailAddress}
+                    locale={locale}
+                    languages={languages} // languages je potřeba naimportovat nebo získat jinak
+                // --- Start Modification: Remove translations prop ---
+                // translations={translations}
+                // --- End Modification ---
+                />
+            </div>
 
-            {/* Dolní mřížka receptů (zbytek) */}
-            {bottomRecipes.length > 0 && (
-                <HomePageClient recipes={bottomRecipes} locale={locale} />
-            )}
+            <HomePageClient recipes={allLocalizedRecipes} locale={locale} />
+
         </main>
     );
 }
 
-// ... generateStaticParams (pokud existuje) ... 
