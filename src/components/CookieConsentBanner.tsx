@@ -75,12 +75,12 @@ export default function CookieConsentBanner() {
             damping: 20,
             delay: 0.2,
           }}
-          className="fixed bottom-4 left-4 right-4 z-[999] p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 font-sans sm:left-auto sm:right-5 sm:bottom-5 sm:w-full sm:max-w-md"
+          className="fixed bottom-4 left-4 right-4 z-[999] p-5 bg-gray-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-gray-700 font-sans sm:left-auto sm:right-5 sm:bottom-5 sm:w-full sm:max-w-md"
         >
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-1 font-serif">
+          <h3 className="text-base font-semibold text-white mb-1 font-serif">
             Trocha soukromí, prosím
           </h3>
-          <p className="text-xs text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
+          <p className="text-xs text-gray-300 mb-4 leading-relaxed">
             Používáme cookies a podobné technologie, abychom pochopili, jak se
             vám tu líbí (analýza), a mohli web zlepšovat. Váš souhlas nám pomůže
             uvařit lepší zážitek.
@@ -90,7 +90,7 @@ export default function CookieConsentBanner() {
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleDecline}
-              className="px-3 py-1.5 rounded text-xs font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-500 dark:focus:ring-offset-gray-900 transition-colors duration-150"
+              className="px-3 py-1.5 rounded text-xs font-medium text-gray-300 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-500 focus:ring-offset-gray-900 transition-colors duration-150"
             >
               Jen nezbytné
             </motion.button>
@@ -98,7 +98,7 @@ export default function CookieConsentBanner() {
               whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.97 }}
               onClick={handleAccept}
-              className="px-3 py-1.5 rounded text-xs font-medium text-white bg-gray-800 hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-800 dark:focus:ring-gray-100 dark:focus:ring-offset-gray-900 transition-colors duration-150"
+              className="px-3 py-1.5 rounded text-xs font-medium text-gray-900 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-100 focus:ring-offset-gray-900 transition-colors duration-150"
             >
               Přijímám vše
             </motion.button>

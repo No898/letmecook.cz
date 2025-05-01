@@ -61,8 +61,9 @@ const StepItem = ({
     >
       <motion.div
         onClick={onCheck}
-        className={`absolute -left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm transition-colors cursor-pointer ${isChecked ? "bg-green-600 text-white" : "bg-accent text-white"
-          }`}
+        className={`absolute -left-0 top-0 flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm transition-colors cursor-pointer ${
+          isChecked ? "bg-green-600 text-white" : "bg-accent text-white"
+        }`}
         initial={{ scale: 0 }}
         whileInView={{ scale: 1 }}
         viewport={{ once: true, amount: 0.5 }}
@@ -98,8 +99,9 @@ const StepItem = ({
       </motion.div>
       <div
         onClick={onCheck}
-        className={`flex-grow pt-0.5 transition-opacity cursor-pointer ${isChecked ? "opacity-50 line-through" : "opacity-100"
-          }`}
+        className={`flex-grow pt-0.5 transition-opacity cursor-pointer ${
+          isChecked ? "opacity-50 line-through" : "opacity-100"
+        }`}
       >
         {children}
       </div>
@@ -202,7 +204,7 @@ export default function RecipeDetailClient({
           {recipe.title}
         </h1>
         {recipe.nationalTitle && (
-          <h2 className="text-2xl sm:text-3xl text-gray-500 dark:text-gray-400 font-serif mb-8">
+          <h2 className="text-2xl sm:text-3xl text-gray-400 font-serif mb-8">
             {recipe.nationalTitle}
           </h2>
         )}
@@ -226,13 +228,13 @@ export default function RecipeDetailClient({
         )}
       </div>
 
-      <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto text-center">
+      <p className="text-lg md:text-xl text-gray-300 mb-12 leading-relaxed max-w-3xl mx-auto text-center">
         {recipe.description}
       </p>
 
       {/* Ikonky pro sdílení a kopírování */}
       <div className="flex justify-center items-center space-x-4 mb-12">
-        <span className="text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-sm text-gray-400">
           {translations.share_label}
         </span>
         {/* Facebook */}
@@ -243,7 +245,7 @@ export default function RecipeDetailClient({
           target="_blank"
           rel="noopener noreferrer"
           title={translations.share_on_facebook}
-          className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
+          className="text-gray-400 hover:text-accent transition-colors duration-150"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -262,7 +264,7 @@ export default function RecipeDetailClient({
           target="_blank"
           rel="noopener noreferrer"
           title={translations.share_on_whatsapp}
-          className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
+          className="text-gray-400 hover:text-accent transition-colors duration-150"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -281,7 +283,7 @@ export default function RecipeDetailClient({
           target="_blank"
           rel="noopener noreferrer"
           title={translations.share_on_x}
-          className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
+          className="text-gray-400 hover:text-accent transition-colors duration-150"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -297,10 +299,10 @@ export default function RecipeDetailClient({
           href={`mailto:?subject=${encodeURIComponent(
             recipe.title
           )}&body=${encodeURIComponent(
-            "Podívej se na tento recept: " + currentUrl
+            translations.check_out_recipe + currentUrl
           )}`}
           title={translations.share_via_email}
-          className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150"
+          className="text-gray-400 hover:text-accent transition-colors duration-150"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -320,9 +322,8 @@ export default function RecipeDetailClient({
         {/* Kopírovat odkaz */}
         <button
           onClick={handleCopyLink}
-          title={isCopied ? translations.link_copied : translations.copy_link}
-          aria-label={isCopied ? translations.link_copied : translations.copy_link}
-          className="text-gray-500 dark:text-gray-400 hover:text-accent dark:hover:text-accent transition-colors duration-150 relative"
+          title={translations.copy_link}
+          className="text-gray-400 hover:text-accent transition-colors duration-150 relative"
           aria-live="polite"
         >
           {isCopied ? (
@@ -376,21 +377,22 @@ export default function RecipeDetailClient({
                 {section.sectionTitle}
               </h3>
               {section.servings && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 italic">
+                <p className="text-sm text-gray-400 mb-4 italic">
                   {section.servings}
                 </p>
               )}
-              <ul className="list-none space-y-3 text-gray-700 dark:text-gray-300">
+              <ul className="list-none space-y-3 text-gray-300">
                 {section.items.map((item, itemIndex) => {
                   const key = `${sectionIndex}-${itemIndex}`;
                   const isChecked = checkedItems[key];
                   return (
                     <ListItem key={key} delay={itemIndex * 0.05}>
                       <motion.div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5 ${isChecked
-                          ? "bg-accent border-accent"
-                          : "border-gray-300 dark:border-gray-600 hover:border-accent"
-                          }`}
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 mt-0.5 ${
+                          isChecked
+                            ? "bg-accent border-accent"
+                            : "border-gray-600 hover:border-accent"
+                        }`}
                         onClick={() => handleCheck(sectionIndex, itemIndex)}
                         whileTap={{ scale: 0.9 }}
                       >
@@ -417,8 +419,9 @@ export default function RecipeDetailClient({
                         </AnimatePresence>
                       </motion.div>
                       <span
-                        className={`transition-opacity cursor-pointer ${isChecked ? "opacity-50 line-through" : "opacity-100"
-                          }`}
+                        className={`transition-opacity cursor-pointer ${
+                          isChecked ? "opacity-50 line-through" : "opacity-100"
+                        }`}
                         onClick={() => handleCheck(sectionIndex, itemIndex)}
                       >
                         {item}
@@ -450,22 +453,24 @@ export default function RecipeDetailClient({
                     {section.sectionTitle}
                   </h3>
                   {hasBriefSteps && (
-                    <div className="flex space-x-1 border border-gray-300 dark:border-gray-600 rounded-full p-0.5 text-sm">
+                    <div className="flex space-x-1 border border-gray-600 rounded-full p-0.5 text-sm">
                       <button
                         onClick={() => toggleProcedureView(sectionIndex)}
-                        className={`px-3 py-1 rounded-full transition-colors ${currentView === "detailed"
-                          ? "bg-accent text-white"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                          }`}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          currentView === "detailed"
+                            ? "bg-accent text-white"
+                            : "hover:bg-gray-700"
+                        }`}
                       >
                         {translations.detailed}
                       </button>
                       <button
                         onClick={() => toggleProcedureView(sectionIndex)}
-                        className={`px-3 py-1 rounded-full transition-colors ${currentView === "brief"
-                          ? "bg-accent text-white"
-                          : "hover:bg-gray-100 dark:hover:bg-gray-700"
-                          }`}
+                        className={`px-3 py-1 rounded-full transition-colors ${
+                          currentView === "brief"
+                            ? "bg-accent text-white"
+                            : "hover:bg-gray-700"
+                        }`}
                       >
                         {translations.brief}
                       </button>
@@ -500,7 +505,7 @@ export default function RecipeDetailClient({
                                 )
                               }
                             >
-                              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              <p className="text-gray-300 leading-relaxed">
                                 {step}
                               </p>
                             </StepItem>
@@ -526,7 +531,7 @@ export default function RecipeDetailClient({
                                 )
                               }
                             >
-                              <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                              <p className="text-gray-300 leading-relaxed">
                                 {step}
                               </p>
                             </StepItem>
@@ -576,14 +581,12 @@ export default function RecipeDetailClient({
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.5 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-accent/10 dark:bg-accent/20 border-l-4 border-accent p-5 rounded-r-lg transition-transform duration-200"
+                    className="bg-accent/20 border-l-4 border-accent p-5 rounded-r-lg transition-transform duration-200"
                   >
-                    <h4 className="font-semibold text-lg mb-2 text-gray-800 dark:text-gray-100">
+                    <h4 className="font-semibold text-lg mb-2 text-gray-100">
                       {tip.title}
                     </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {tip.text}
-                    </p>
+                    <p className="text-gray-300">{tip.text}</p>
                   </motion.div>
                 ))}
               </div>
@@ -600,7 +603,7 @@ export default function RecipeDetailClient({
               <h3 className="text-3xl font-semibold font-serif mb-6">
                 {recipe.serving.sectionTitle}
               </h3>
-              <div className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 leading-relaxed space-y-4">
+              <div className="prose prose-lg prose-invert max-w-none text-gray-300 leading-relaxed space-y-4">
                 {recipe.serving.suggestions.map((suggestion, index) => (
                   <p key={index}>{suggestion}</p>
                 ))}
