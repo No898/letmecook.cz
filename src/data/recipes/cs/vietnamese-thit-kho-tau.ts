@@ -1,7 +1,7 @@
 import type { Recipe } from "@/types/recipe";
 
 export const recipe: Recipe = {
-  id: "thit-kho-tau",
+  id: "vietnamese-thit-kho-tau",
   title: "Domácí karamelizovaný bůček s vejci - Thịt kho tàu",
   imageUrl: "/images/vietnamese-thit-kho-tau.webp",
   description:

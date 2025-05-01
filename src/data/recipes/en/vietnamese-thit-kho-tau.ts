@@ -1,8 +1,8 @@
 import type { Recipe } from "@/types/recipe";
 
 export const recipe: Recipe = {
-  id: "thit-kho-tau",
-  title: "Thịt kho tàu (Homemade Caramelized Pork Belly with Eggs)",
+  id: "vietnamese-thit-kho-tau",
+  title: "Homemade Vietnamese Caramelized Pork Belly with Eggs - Thịt Kho Tàu",
   imageUrl: "/images/vietnamese-thit-kho-tau.webp", // Added image URL
   description:
     // Adjusted description based on user's final CS version
