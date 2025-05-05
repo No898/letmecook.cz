@@ -48,7 +48,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     const emailAddress = "hello@tomasdinh.cz";
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8">
+        <div className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8">
             <div className="relative z-50 order-first md:order-none w-full flex justify-center isolate">
                 <HomePageHeader
                     title={t('home.title')}
@@ -59,6 +59,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 />
             </div>
             <HomePageClient recipes={allLocalizedRecipes} locale={locale} />
-        </main>
+        </div>
     );
 }
