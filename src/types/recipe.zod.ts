@@ -10,9 +10,8 @@ const RecipeIngredientSectionSchema = z.object({
 // Schéma pro sekci postupu
 const RecipeProcedureSectionSchema = z.object({
   sectionTitle: z.string().min(1),
-  steps: z.array(z.string().min(1)), // Pole neprázdných stringů
-  briefSteps: z.array(z.string().min(1)).optional(), // Volitelné pole neprázdných stringů
-  videoUrl: z.string().startsWith("/").optional(), // Změněno: Povolíme string začínající '/', nebo žádnou hodnotu
+  steps: z.array(z.string().min(1)), 
+  briefSteps: z.array(z.string().min(1)).optional(), 
 });
 
 // Schéma pro tip

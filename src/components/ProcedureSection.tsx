@@ -102,7 +102,7 @@ interface ProcedureSectionProps {
     imageUrl?: string;
 }
 
-const ProcedureSection: React.FC<ProcedureSectionProps> = ({ sections, checkedSteps, onCheckStep, procedureView, onToggleView, translations, imageUrl }) => {
+const ProcedureSection: React.FC<ProcedureSectionProps> = ({ sections, checkedSteps, onCheckStep, procedureView, onToggleView, translations }) => {
     return (
         <div className="lg:col-span-2 space-y-12">
             {sections.map((section, sectionIndex) => {
@@ -209,25 +209,6 @@ const ProcedureSection: React.FC<ProcedureSectionProps> = ({ sections, checkedSt
                                 )}
                             </motion.div>
                         </AnimatePresence>
-
-                        {section.videoUrl && (
-                            <motion.div
-                                className="mt-8 aspect-video relative rounded-lg overflow-hidden shadow-lg"
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true, amount: 0.5 }}
-                                transition={{ duration: 0.5 }}
-                            >
-                                <video
-                                    controls
-                                    src={section.videoUrl}
-                                    className="w-full h-full absolute top-0 left-0 object-cover bg-black"
-                                    poster={imageUrl}
-                                >
-                                    {translations.video_fallback || "Your browser does not support the video tag."}
-                                </video>
-                            </motion.div>
-                        )}
                     </motion.section>
                 );
             })}

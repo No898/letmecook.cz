@@ -11,7 +11,6 @@ export interface RecipeProcedureSection {
     sectionTitle: string;
     steps: string[];
     briefSteps?: string[];
-    videoUrl?: string;
 }
 
 export interface RecipeTip {

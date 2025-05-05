@@ -17,7 +17,6 @@ const RecipeProcedureSectionSchema = z.object({
     sectionTitle: z.string(),
     steps: z.array(z.string()),
     briefSteps: z.array(z.string()).optional(),
-    videoUrl: z.string().optional(),
 });
 
 const RecipeTipSchema = z.object({

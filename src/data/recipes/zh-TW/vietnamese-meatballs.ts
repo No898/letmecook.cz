@@ -65,7 +65,6 @@ export const recipe: Recipe = {
         "將炸好的肉丸撈起，放在廚房紙巾上瀝乾油分。",
       ],
       briefSteps: ["用中火將肉丸炸至金黃 (5-7分鐘)。", "放在廚房紙巾上吸油。"],
-      videoUrl: "/videos/vietnamese-meat-balls.mp4", // Stays the same
     },
     {
       sectionTitle: "沾醬：Nước Chấm",

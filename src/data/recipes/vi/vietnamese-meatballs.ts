@@ -68,7 +68,6 @@ export const recipe: Recipe = {
         "Chiên thịt viên ở lửa vừa cho vàng đều (5-7 phút).",
         "Để ráo dầu trên giấy thấm dầu.",
       ],
-      videoUrl: "/videos/vietnamese-meat-balls.mp4", // Stays the same
     },
     {
       sectionTitle: "Pha Nước Chấm",

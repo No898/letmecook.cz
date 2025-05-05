@@ -68,7 +68,6 @@ export const recipe: Recipe = {
         "Fry meatballs over medium heat until golden brown (5-7 min).",
         "Drain on paper towels.",
       ],
-      videoUrl: "/videos/vietnamese-meat-balls.mp4", // Stays the same
     },
     {
       sectionTitle: "Sauce: Nước Chấm",

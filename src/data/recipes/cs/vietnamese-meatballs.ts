@@ -68,7 +68,6 @@ export const recipe: Recipe = {
         "Smažte kuličky na středním oleji dozlatova (5-7 min).",
         "Nechte okapat na papírové utěrce.",
       ],
-      videoUrl: "/videos/vietnamese-meat-balls.mp4",
     },
     {
       sectionTitle: "Omáčka: Nước Chấm",
