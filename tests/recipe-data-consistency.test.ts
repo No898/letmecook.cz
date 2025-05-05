@@ -1,78 +1,56 @@
-import fs from "fs";
-import path from "path";
-import type { Recipe } from "@/types/recipe"; // Importujeme typ Recipe
 
-// ----- Sdílená logika pro získání názvů receptů (může být v budoucnu refaktorována do helperu) -----
-const recipesBasePath = path.join(__dirname, "..", "src", "data", "recipes");
-const locales = ["cs", "en", "vi", "zh-TW"]; // Jazyky pro kontrolu
+import type { Recipe } from "@/types/recipe";
 
-const getRecipeBasenames = (locale: string): string[] => {
-  const localeDir = path.join(recipesBasePath, locale);
-  try {
-    const files = fs.readdirSync(localeDir);
-    return files
-      .filter((file) => file.endsWith(".ts"))
-      .map((file) => file.replace(".ts", ""))
-      .sort();
-  } catch (error) {
-    console.error(`Error reading directory ${localeDir}:`, error);
-    return [];
-  }
-};
-// ---------------------------------------------------------------------------------------------
+import { locales, referenceLocale, getRecipeBasenames } from "./helpers/recipeTestUtils";
 
-const referenceLocale = "cs"; // Použijeme češtinu jako referenci
 const recipeBasenames = getRecipeBasenames(referenceLocale);
 
 describe("Recipe Data Consistency Across Locales", () => {
-  // Procházíme každý unikátní název receptu
-  recipeBasenames.forEach((basename) => {
+  // Typování parametru
+  recipeBasenames.forEach((basename: string) => {
     describe(`Recipe: ${basename}`, () => {
       let recipesByLocale: Record<string, Recipe | null> = {};
-      let loadErrors: Record<string, any> = {};
+      let loadErrors: Record<string, Error | unknown> = {}; 
 
-      // Před testy pro tento recept načteme všechny jeho jazykové verze
       beforeAll(async () => {
-        recipesByLocale = {}; // Reset pro každý recept
+        recipesByLocale = {};
         loadErrors = {};
+        // Typování parametru
         for (const locale of locales) {
           try {
-            // Cesta relativní k projektu pro dynamický import, který zpracuje jest a ts-jest
             const recipePath = `@/data/recipes/${locale}/${basename}`;
-            // Používáme require místo import(), protože Jest může mít s dynamickým importem v CommonJS více problémů
-            // const module = await import(recipePath); // Pokud by require selhalo, zkusili bychom toto
-            const module = require(recipePath);
-            if (!module || !module.recipe) {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const recipeModule = require(recipePath);
+            if (!recipeModule || !recipeModule.recipe) {
               throw new Error(
                 `Module or recipe export not found in ${recipePath}`
               );
             }
-            recipesByLocale[locale] = module.recipe as Recipe;
+            recipesByLocale[locale] = recipeModule.recipe as Recipe;
           } catch (error) {
-            console.error(`Error loading recipe ${locale}/${basename}:`, error);
-            recipesByLocale[locale] = null; // Označíme, že se nepodařilo načíst
+            recipesByLocale[locale] = null;
             loadErrors[locale] = error;
+            // Logování zde není nutné, řeší se v 'it' bloku
           }
         }
       });
 
-      // Test 1: Ověříme, že se všechny jazykové verze podařilo načíst
       it("should load successfully for all locales", () => {
-        locales.forEach((locale) => {
-          // Opraveno: expect přijímá jen jeden argument
-          expect(recipesByLocale[locale]).not.toBeNull();
-          // Pokud chceme vidět chybu v případě selhání, můžeme přidat log nebo nechat Jest vypsat standardní chybu
+        // Typování parametru
+        locales.forEach((locale: string) => {
           if (!recipesByLocale[locale]) {
+            const error = loadErrors[locale];
+            const errorMessage = error instanceof Error ? error.message : String(error);
             console.error(
-              `Recipe ${locale}/${basename} failed to load. Error:`,
-              loadErrors[locale]
+              `Recipe ${locale}/${basename} failed to load. Error: ${errorMessage}`
             );
           }
+          expect(recipesByLocale[locale]).not.toBeNull();
         });
       });
 
-      // Test 2: Porovnáme specifická pole napříč jazyky
-      // Pole, která musí mít stejnou hodnotu
+      // ... zbytek testu (fieldsToCompare, etc.) ...
+      // Vnitřní forEach také potřebují typování pro locale
       const fieldsToCompare: (keyof Recipe)[] = [
         "id",
         "imageUrl",
@@ -84,39 +62,34 @@ describe("Recipe Data Consistency Across Locales", () => {
       ];
 
       fieldsToCompare.forEach((field) => {
-        it(`should have consistent '${String(
-          field
-        )}' across all locales`, () => {
+        it(`should have consistent '${String(field)}' across all locales`, () => {
           const referenceRecipe = recipesByLocale[referenceLocale];
 
-          // Pokud se nepodařilo načíst referenční recept, tento test přeskočíme
-          // (selhání už bylo reportováno v předchozím testu)
           if (!referenceRecipe) {
+            // Warning se vypíše, pokud referenční selže, test projde
             console.warn(
               `Skipping field consistency check for ${basename} because reference recipe (${referenceLocale}) failed to load.`
             );
-            return; // Ukončíme tento 'it' blok
+            return;
           }
-
           const referenceValue = referenceRecipe[field];
 
-          // Porovnáme s ostatními jazyky
           locales
-            .filter((l) => l !== referenceLocale)
-            .forEach((locale) => {
+            .filter((l: string) => l !== referenceLocale) // Typ pro l
+            .forEach((locale: string) => { // Typ pro locale
               const currentRecipe = recipesByLocale[locale];
-              // Pokud se nepodařilo načíst aktuální recept, také přeskočíme
               if (!currentRecipe) {
+                // Pokud selže načtení jiné locale, jen varujeme a pokračujeme
                 console.warn(
                   `Skipping field consistency check for ${basename} - locale ${locale} failed to load.`
                 );
-                return; // Přeskočíme porovnání pro tento jazyk
+                return;
               }
-
               expect(currentRecipe[field]).toEqual(referenceValue);
             });
         });
       });
+
     });
   });
 });

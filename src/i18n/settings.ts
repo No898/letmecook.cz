@@ -3,14 +3,14 @@ export const languages = [fallbackLng, 'en', 'vi', 'zh-TW'];
 export const defaultNS = 'common';
 export const cookieName = 'i18next';
 
-export function getOptions(lng = fallbackLng, ns = defaultNS) {
+export function getOptions(lng = fallbackLng, ns: string | readonly string[] = defaultNS) {
     return {
-        // debug: true, // Povolte pro ladění
+        // debug: true,
         supportedLngs: languages,
         fallbackLng,
         lng,
         fallbackNS: defaultNS,
-        defaultNS,
-        ns,
+        defaultNS: defaultNS,
+        ns: ns,
     };
 } 

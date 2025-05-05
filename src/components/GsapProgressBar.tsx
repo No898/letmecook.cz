@@ -38,8 +38,7 @@ export default function GsapProgressBar({ target }: GsapProgressBarProps) {
           scrub: true, // Propojí animaci přímo se scrollováním (true = plynulé)
           start: "top top", // Začne, když horní hrana triggeru dosáhne horní hrany okna
           end: "bottom bottom", // Skončí, když dolní hrana triggeru dosáhne dolní hrany okna
-          // Můžete experimentovat s `markers: true` pro vizualizaci triggerů
-          // markers: process.env.NODE_ENV === "development",
+          // markers: process.env.NODE_ENV === "development", // Ponecháno pro snadné ladění
         },
       });
     });

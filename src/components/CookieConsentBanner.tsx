@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Deklarace gtag funkce pro TypeScript (opraveno)
+// Deklarace gtag funkce pro TypeScript
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
@@ -34,15 +34,13 @@ export default function CookieConsentBanner() {
   useEffect(() => {
     const consentStatus = localStorage.getItem("cookie_consent_status");
 
-    // Pokud uživatel dříve souhlasil nebo odmítl, aktualizujeme Consent Mode hned
+    // Zpracování existujícího souhlasu nebo zobrazení banneru
     if (consentStatus === "accepted") {
       updateConsent(true);
-      // Banner se nezobrazí
     } else if (consentStatus === "declined") {
       updateConsent(false);
-      // Banner se nezobrazí
     } else {
-      // Pokud souhlas ještě nebyl udělen ani odmítnut, zobrazíme banner
+      // Zobrazit banner se zpožděním, pokud souhlas nebyl udělen
       const timer = setTimeout(() => {
         setShowBanner(true);
       }, 1500);
@@ -53,13 +51,13 @@ export default function CookieConsentBanner() {
   const handleAccept = () => {
     localStorage.setItem("cookie_consent_status", "accepted");
     setShowBanner(false);
-    updateConsent(true); // Aktualizace souhlasu na 'granted'
+    updateConsent(true);
   };
 
   const handleDecline = () => {
     localStorage.setItem("cookie_consent_status", "declined");
     setShowBanner(false);
-    updateConsent(false); // Aktualizace souhlasu na 'denied'
+    updateConsent(false);
   };
 
   return (

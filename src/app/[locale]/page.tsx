@@ -1,20 +1,17 @@
-import HomePageClient from "@/components/HomePageClient"; // Zpět k původní komponentě
-// import RecipeCarousel from "@/components/RecipeCarousel"; // Odstraněn import karuselu
-// import { FaInstagram, FaEnvelope } from "react-icons/fa"; // Odstraněno - přesunuto do HomePageHeader
-import { Recipe } from "@/types/recipe"; // Aktualizovaný import
-import fs from "fs/promises"; // Import pro práci se soubory
-import path from "path"; // Import pro práci s cestami
-import { initI18nextInstance } from "@/i18n"; // Import naší inicializační funkce
-import HomePageHeader from "@/components/HomePageHeader"; // Import nové komponenty
-import { languages } from "@/i18n/settings"; // Import seznamu jazyků
+import HomePageClient from "@/components/HomePageClient";
+import { Recipe } from "@/types/recipe";
+import fs from "fs/promises";
+import path from "path";
+import { getTranslations } from "@/i18n/server";
+import HomePageHeader from "@/components/HomePageHeader";
+import { languages } from "@/i18n/settings";
 
-// Pomocná funkce pro načtení receptů
+// Pomocná funkce pro načtení receptů (používá alias)
 async function loadRecipes(locale: string): Promise<Recipe[]> {
     try {
         const recipesDir = path.join(process.cwd(), 'src', 'data', 'recipes', locale);
         const recipeFiles = await fs.readdir(recipesDir);
 
-        // Přímo zpracujeme Promise.all
         const recipesOrNull = await Promise.all(
             recipeFiles
                 .filter((file) => file.endsWith('.ts'))
@@ -23,70 +20,45 @@ async function loadRecipes(locale: string): Promise<Recipe[]> {
                     try {
                         const { recipe } = await import(`@/data/recipes/${locale}/${recipeId}.ts`);
                         return recipe as Recipe;
-                    } catch (importError) {
+                    } catch (importError: unknown) {
                         console.error(`Error importing recipe ${locale}/${recipeId}:`, importError);
                         return null;
                     }
                 })
         );
         return recipesOrNull.filter((recipe): recipe is Recipe => recipe !== null);
-    } catch (error) {
-        console.error(`Error reading recipes for locale ${locale}:`, error);
-        return []; // Vrátíme prázdné pole v případě chyby
+    } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'code' in error && (error as { code: unknown }).code === 'ENOENT') {
+            console.log(`No recipes found for locale ${locale}, directory likely missing.`);
+        } else {
+            console.error(`Error reading recipes for locale ${locale}:`, error);
+        }
+        return [];
     }
 }
 
-// Hlavní komponenta stránky - upravená signatura
-export default async function HomePage({
-    params
-}: {
-    params: Promise<{ locale: string }>
-}) {
-    // Nejprve await params a pak destrukturace
+// Hlavní komponenta stránky
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;
-
-    // Nyní používáme přímo proměnnou 'locale'
-    console.log("Current Locale:", locale); // Jen pro kontrolu
-
-    // Používáme 'locale' místo 'currentLocale'
-    const { t } = await initI18nextInstance(locale, 'common');
-
+    const { t } = await getTranslations(locale, 'common');
+    // Paralelní načítání receptů
     const allLocalizedRecipes = await loadRecipes(locale);
-
-    // --- Start Modification: Remove translations object creation ---
-    /*
-    const translations = {
-        hover_title_hint: t('hover_title_hint'), // Klíč pro desktop hint
-        click_title_hint: t('click_title_hint')  // Klíč pro mobile hint
-        // Přidej sem další klíče, pokud jsou potřeba
-    };
-    */
-    // --- End Modification ---
 
     const instagramUrl = "https://www.instagram.com/thepiggie/";
     const emailAddress = "hello@tomasdinh.cz";
 
     return (
-        // Hlavní kontejner zůstává flex-col
-        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8"> {/* Přidán space-y pro mezery */}
-
-            {/* Střední část - Záhlaví (název a odkazy) */}
+        <main className="flex min-h-screen flex-col items-center px-6 py-16 md:px-12 md:py-24 space-y-8">
             <div className="relative z-50 order-first md:order-none w-full flex justify-center isolate">
                 <HomePageHeader
                     title={t('home.title')}
                     instagramUrl={instagramUrl}
                     emailAddress={emailAddress}
                     locale={locale}
-                    languages={languages} // languages je potřeba naimportovat nebo získat jinak
-                // --- Start Modification: Remove translations prop ---
-                // translations={translations}
-                // --- End Modification ---
+                    languages={languages}
                 />
             </div>
-
             <HomePageClient recipes={allLocalizedRecipes} locale={locale} />
-
         </main>
     );
 }
-

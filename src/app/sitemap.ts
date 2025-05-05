@@ -1,51 +1,99 @@
 import { MetadataRoute } from "next";
+import fs from "fs/promises";
+import path from "path";
+import { languages } from "@/i18n/settings";
 
-// --- !!! DŮLEŽITÉ !!! ---
-// Tuto funkci musíte nahradit vaší skutečnou logikou
-// pro načtení všech publikovaných receptů z vaší databáze, CMS, nebo API.
-// Měla by vracet pole objektů, kde každý objekt obsahuje alespoň 'slug'
-// a ideálně i datum poslední úpravy ('updatedAt').
-async function getAllPublishedRecipes(): Promise<
-  { slug: string; updatedAt: Date }[]
-> {
-  console.warn(
-    "Sitemap generation: Using placeholder data for recipes. Replace getAllPublishedRecipes with actual implementation."
-  );
-  // Příklad placeholder dat:
-  return [
-    { slug: "muj-prvni-recept", updatedAt: new Date("2024-05-20") },
-    { slug: "druhy-skvely-recept", updatedAt: new Date("2024-05-21") },
-    // ... sem přidejte logiku pro načtení všech vašich receptů
-  ];
-}
-// -------------------------
-
-// --- !!! DŮLEŽITÉ !!! ---
 // Nastavte základní URL vašeho webu. Ideálně z environmentální proměnné.
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz";
 // Ujistěte se, že NEXT_PUBLIC_BASE_URL je nastavena ve vašem Vercel projektu.
-// -------------------------
+
+// Regex pro extrakci datePublished: 'YYYY-MM-DD'
+const datePublishedRegex = /datePublished:\s*['|"](\d{4}-\d{2}-\d{2})['|"]/;
+
+// Funkce pro načtení všech receptů a pokus o získání data publikace
+async function getAllActualRecipePaths(): Promise<{ locale: string; id: string; lastModified: Date }[]> {
+  const allPaths: { locale: string; id: string; lastModified: Date }[] = [];
+  const recipeDataBasePath = path.join(process.cwd(), 'src', 'data', 'recipes');
+
+  try {
+    for (const locale of languages) {
+      const localeDir = path.join(recipeDataBasePath, locale);
+      try {
+        const recipeFiles = await fs.readdir(localeDir);
+        for (const file of recipeFiles) {
+          if (file.endsWith('.ts') && !file.startsWith('_')) {
+            const id = file.replace('.ts', '');
+            const filePath = path.join(localeDir, file);
+            let lastModifiedDate: Date | null = null;
+
+            try {
+              // Zkusíme přečíst soubor a najít datePublished
+              const fileContent = await fs.readFile(filePath, 'utf-8');
+              const match = fileContent.match(datePublishedRegex);
+              if (match && match[1]) {
+                const parsedDate = new Date(match[1]);
+                if (!isNaN(parsedDate.getTime())) {
+                  lastModifiedDate = parsedDate;
+                }
+              }
+            } catch (readError) {
+              console.error(`Error reading file content for ${filePath}:`, readError);
+            }
+
+            try {
+              // Pokud datePublished nebylo nalezeno/platné, použijeme mtime
+              if (!lastModifiedDate) {
+                const stats = await fs.stat(filePath);
+                lastModifiedDate = stats.mtime;
+              }
+              allPaths.push({
+                locale: locale,
+                id: id,
+                lastModified: lastModifiedDate,
+              });
+            } catch (statError) {
+              console.error(`Error getting stats for file ${filePath}:`, statError);
+            }
+          }
+        }
+      } catch (error: unknown) {
+        if (typeof error === 'object' && error !== null && 'code' in error && (error as { code: unknown }).code === 'ENOENT') {
+          // Adresář pro locale neexistuje, tichý přeskok
+        } else {
+          console.error(`Error reading recipe directory ${localeDir}:`, error);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Fatal error getting recipe paths for sitemap:", error);
+  }
+  return allPaths;
+}
+
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Načtení všech receptů
-  const recipes = await getAllPublishedRecipes();
+  const recipePaths = await getAllActualRecipePaths();
 
-  // Vytvoření záznamů pro každý recept
-  const recipeEntries: MetadataRoute.Sitemap = recipes.map((recipe) => ({
-    url: `${BASE_URL}/recepty/${recipe.slug}`,
-    lastModified: recipe.updatedAt,
-    changeFrequency: "weekly", // Jak často se recepty mění? (monthly, weekly, daily)
-    priority: 0.8, // Priorita oproti ostatním stránkám (0.0 - 1.0)
+  const recipeEntries: MetadataRoute.Sitemap = recipePaths.map((recipePath) => ({
+    url: `${BASE_URL}/${recipePath.locale}/recept/${recipePath.id}`,
+    lastModified: recipePath.lastModified,
+    changeFrequency: "weekly",
+    priority: 0.8,
   }));
 
-  // Vrácení pole s URL adresami: homepage + všechny recepty
   return [
     {
       url: BASE_URL,
-      lastModified: new Date(), // Aktuální datum pro homepage
-      changeFrequency: "daily", // Jak často se mění homepage?
-      priority: 1.0, // Nejvyšší priorita
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 1.0,
     },
+    ...languages.map((locale) => ({
+      url: `${BASE_URL}/${locale}`,
+      lastModified: new Date(),
+      changeFrequency: "daily" as const,
+      priority: 0.9,
+    })),
     ...recipeEntries,
   ];
 }

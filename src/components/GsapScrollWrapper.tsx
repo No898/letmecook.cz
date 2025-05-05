@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import GsapProgressBar from "./GsapProgressBar"; // Import nové GSAP verze
+import GsapProgressBar from "./GsapProgressBar";
 
 export default function GsapScrollWrapper({
   children,
@@ -13,16 +13,10 @@ export default function GsapScrollWrapper({
 
   return (
     <div className="relative">
-      {" "}
-      {/* Obalující div */}
-      {/* GSAP Progress bar dostane ref na kontejner obsahu */}
       <GsapProgressBar target={contentRef} />
-      {/* Kontejner obsahu, kterému přiřadíme ref */}
       {/* Tento div bude sloužit jako 'trigger' pro ScrollTrigger */}
       <div ref={contentRef} className="gsap-scroll-trigger-container">
-        {" "}
-        {/* Přidán ref a třída */}
-        {children} {/* Zde bude <article> s receptem */}
+        {children}
       </div>
     </div>
   );

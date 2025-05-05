@@ -1,39 +1,22 @@
 import fs from "fs";
 import path from "path";
 import type { Recipe } from "@/types/recipe";
+// Import z helperu
+import { locales, publicBasePath, getRecipeFileInfoList } from "./helpers/recipeTestUtils";
 
-// ----- Sdílená logika (opět, může být refaktorována) -----
-const recipesBasePath = path.join(__dirname, "..", "src", "data", "recipes");
-const publicBasePath = path.join(__dirname, "..", "public"); // Cesta k public složce
-const locales = ["cs", "en", "vi", "zh-TW"];
+// Typ pro položku z getRecipeFileInfoList
+type RecipeFileInfo = ReturnType<typeof getRecipeFileInfoList>[number];
 
-const getRecipeFilesInfo = (
-  locale: string
-): { basename: string; fullPathForRequire: string; displayPath: string }[] => {
-  const localeDir = path.join(recipesBasePath, locale);
-  try {
-    const files = fs.readdirSync(localeDir);
-    return files
-      .filter((file) => file.endsWith(".ts"))
-      .map((file) => {
-        const basename = file.replace(".ts", "");
-        return {
-          basename: basename,
-          fullPathForRequire: `@/data/recipes/${locale}/${basename}`,
-          displayPath: `src/data/recipes/${locale}/${file}`,
-        };
-      });
-  } catch (error) {
-    console.error(`Error reading directory ${localeDir}:`, error);
-    return [];
-  }
-};
-// ------------------------------------------------------
+// Sdílená logika je nyní v helperu
+// const recipesBasePath = ...
+// const publicBasePath = ...
+// const locales = ...
+// const getRecipeFilesInfo = ...
 
 describe("Recipe Image Existence", () => {
-  locales.forEach((locale) => {
+  locales.forEach((locale: string) => {
     describe(`Locale: ${locale}`, () => {
-      const recipeFiles = getRecipeFilesInfo(locale);
+      const recipeFiles = getRecipeFileInfoList(locale);
 
       if (recipeFiles.length === 0) {
         console.warn(
@@ -42,53 +25,43 @@ describe("Recipe Image Existence", () => {
         return;
       }
 
-      recipeFiles.forEach((fileInfo) => {
+      recipeFiles.forEach((fileInfo: RecipeFileInfo) => {
         it(`should have an existing image file for ${fileInfo.displayPath}`, () => {
           let recipe: Recipe | null = null;
-          let loadError: any = null;
 
           try {
-            const module = require(fileInfo.fullPathForRequire);
-            if (!module || !module.recipe) {
+            // eslint-disable-next-line @typescript-eslint/no-require-imports
+            const recipeModule = require(fileInfo.fullPathForRequire);
+            if (!recipeModule || !recipeModule.recipe) {
               throw new Error(
                 `Module or recipe export not found in ${fileInfo.fullPathForRequire}`
               );
             }
-            recipe = module.recipe as Recipe;
-          } catch (error) {
-            loadError = error;
-            // Chybu už logujeme v jiných testech, zde stačí kontrola null
+            recipe = recipeModule.recipe as Recipe;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          } catch (_error) {
+            // Chybu zde ignorujeme, řeší se jinde
           }
 
-          // Přeskocit test, pokud se recept nepodařilo načíst
           if (!recipe) {
             console.warn(
               `Skipping image check for ${fileInfo.displayPath} because it failed to load.`
             );
-            // Tento test projde, pokud se soubor nenačte, protože chyba je jinde
-            expect(recipe).toBeNull();
+            expect(recipe).toBeNull(); 
             return;
           }
 
-          // Zkontrolovat, zda imageUrl existuje a není prázdný string
           expect(recipe.imageUrl).toBeDefined();
           expect(recipe.imageUrl).not.toBe("");
 
           if (recipe.imageUrl) {
-            // Sestavit absolutní cestu k obrázku v public složce
-            // Předpokládáme, že imageUrl začíná '/' (např. /images/...)
             const imagePath = path.join(publicBasePath, recipe.imageUrl);
-
-            // Ověřit existenci souboru
             const imageExists = fs.existsSync(imagePath);
 
-            // Očekáváme, že soubor existuje
-            expect(imageExists).toBe(true);
-
-            // Přidáme log PŘED selháním, pokud soubor neexistuje
             if (!imageExists) {
-              console.error(`Image file not found at: ${imagePath}`);
+              console.error(`Image file not found at: ${imagePath} (referenced in ${fileInfo.displayPath})`);
             }
+            expect(imageExists).toBe(true);
           }
         });
       });

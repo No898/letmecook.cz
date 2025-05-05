@@ -13,6 +13,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/", // Povolit procházení všeho
       // disallow: '/private/', // Příklad: Pokud byste měli co zakázat
     },
-    sitemap: `${BASE_URL}/sitemap.xml`, // Odkaz na vaši sitemapu
+    sitemap: `${BASE_URL}/sitemap.xml`, // Odkaz na sitemapu
   };
 }

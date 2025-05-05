@@ -8,15 +8,12 @@ import { gsap } from "gsap";
 import Image from "next/image";
 import styles from './HomePageHeader.module.css';
 
-// Removed Translations interface definition
-
 interface HomePageHeaderProps {
   title: string;
   instagramUrl: string;
   emailAddress: string;
   locale: string;
   languages: string[];
-  // Removed translations prop
 }
 
 export default function HomePageHeader({
@@ -25,7 +22,6 @@ export default function HomePageHeader({
   emailAddress,
   locale,
   languages,
-  // Removed translations parameter
 }: HomePageHeaderProps) {
   const router = useRouter();
   const headerRef = useRef<HTMLDivElement>(null);
@@ -51,7 +47,6 @@ export default function HomePageHeader({
     window.addEventListener('resize', checkMobile);
 
     const headerElement = headerRef.current;
-    // Skip GSAP setup on mobile
     if (!headerElement || isMobile) {
       tl.current?.kill();
       floatingAnims.current.forEach(anim => anim.kill());
@@ -60,7 +55,48 @@ export default function HomePageHeader({
       return () => window.removeEventListener('resize', checkMobile);
     }
 
-    // GSAP logic only for desktop
+    const clearHideTimeout = () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+        hideTimeoutRef.current = null;
+      }
+    };
+
+    const startHideTimeout = () => {
+      clearHideTimeout();
+      hideTimeoutRef.current = setTimeout(() => {
+        tl.current?.reverse();
+        gsap.delayedCall(0.1, () => {
+          floatingAnims.current.forEach(anim => anim.pause());
+        });
+        hideTimeoutRef.current = null;
+      }, 300);
+    };
+
+    const playAnim = () => {
+      clearHideTimeout();
+      tl.current?.play();
+      floatingAnims.current.forEach(anim => anim.resume());
+    };
+
+    const reverseAnim = () => {
+      startHideTimeout();
+    };
+
+    const titleElement = headerElement.querySelector('h1');
+    const iconContainerElement = headerElement.querySelector<HTMLDivElement>(
+      '.language-icon-container-desktop'
+    )?.parentElement;
+
+    if (titleElement) {
+      titleElement.addEventListener("mouseenter", playAnim);
+      titleElement.addEventListener("mouseleave", reverseAnim);
+    }
+    if (iconContainerElement) {
+      iconContainerElement.addEventListener("mouseenter", playAnim);
+      iconContainerElement.addEventListener("mouseleave", reverseAnim);
+    }
+
     const headerWidth = headerElement.offsetWidth;
     const radiusX = headerWidth * 0.7;
     const radiusY = 80;
@@ -71,11 +107,8 @@ export default function HomePageHeader({
     const angleStep = numberOfVisibleIcons > 0 ? Math.PI / numberOfVisibleIcons : Math.PI;
     let visibleIconIndex = 0;
 
-    // Log initial values
-    console.log(`[HomePageHeader Debug] Locale: ${locale}, Total Langs: ${languages.length}, Visible Icons: ${numberOfVisibleIcons}, Angle Step: ${angleStep}`);
-
     tl.current = gsap.timeline({ paused: true, reversed: true });
-    floatingAnims.current.forEach(anim => anim.kill()); // Clear previous animations
+    floatingAnims.current.forEach(anim => anim.kill());
     floatingAnims.current = [];
 
     gsap.delayedCall(0, () => {
@@ -90,14 +123,12 @@ export default function HomePageHeader({
         const lang = itemContainer.dataset.lang;
         if (!lang) return;
 
-        // Skip active language icon - Nyní by tato podmínka neměla být nikdy splněna, protože aktivní locale nebylo vykresleno, ale necháme ji jako pojistku
         if (lang === locale) {
           console.warn(`[HomePageHeader Debug] Unexpected active locale found in rendered items: ${lang}`);
           gsap.set(itemContainer, { opacity: 0, scale: 0, pointerEvents: 'none' });
           return;
         }
 
-        // Calculate position in semicircle
         const initialAngle = (angleStep / 2) + (visibleIconIndex * angleStep);
         const iconWidth = 100;
         const initialX =
@@ -105,21 +136,16 @@ export default function HomePageHeader({
         const initialY =
           centerY + Math.sin(initialAngle) * radiusY;
 
-        // Log calculated position for this icon
-        console.log(`[HomePageHeader Debug] Icon: ${lang}, Index: ${visibleIconIndex}, Angle: ${initialAngle}, X: ${initialX}, Y: ${initialY}`);
-
         visibleIconIndex++;
 
-        // Set initial state (hidden & positioned)
         gsap.set(itemContainer, {
           opacity: 0,
           scale: 0,
-          x: initialX - iconWidth / 2, // Center horizontally
+          x: initialX - iconWidth / 2,
           y: initialY,
           position: 'absolute',
         });
 
-        // Appearance animation (part of the main timeline)
         tl.current?.to(
           itemContainer,
           {
@@ -128,24 +154,20 @@ export default function HomePageHeader({
             duration: 0.6,
             ease: "back.out(1.7)",
           },
-          0 // Stagger start time?
+          0
         );
 
-        // Přidání animace pro ztmavení ostatních prvků do stejné časové osy
-        // Zajistíme, aby se to přidalo jen jednou
-        if (visibleIconIndex === 1) { // Přidáme jen při zpracování první viditelné ikony
+        if (visibleIconIndex === 1)
           tl.current?.to(
-            [socialLinksRef.current, hintTextRef.current], // Cílové elementy
+            [socialLinksRef.current, hintTextRef.current],
             {
-              opacity: 0.1, // Snížení opacity
-              duration: 0.4, // Kratší trvání než ikony?
+              opacity: 0.1,
+              duration: 0.4,
               ease: "power1.inOut",
             },
-            0 // Spustí se současně s animací ikon
+            0
           );
-        }
 
-        // Floating animation (independent)
         const floatOffsetX = (Math.random() - 0.5) * 6;
         const floatOffsetY = (Math.random() - 0.5) * 4 + 3;
         const floatTween = gsap.to(itemContainer, {
@@ -155,59 +177,12 @@ export default function HomePageHeader({
           repeat: -1,
           yoyo: true,
           ease: "sine.inOut",
-          paused: true, // Start paused
+          paused: true,
         });
         floatingAnims.current.push(floatTween);
       });
     });
 
-    // Hover logic helpers
-    const clearHideTimeout = () => {
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
-        hideTimeoutRef.current = null;
-      }
-    };
-
-    const startHideTimeout = () => {
-      clearHideTimeout();
-      hideTimeoutRef.current = setTimeout(() => {
-        tl.current?.reverse(); // Hide icons (main timeline)
-        gsap.delayedCall(0.1, () => { // Pause floating after hide starts
-          floatingAnims.current.forEach(anim => anim.pause());
-        });
-        hideTimeoutRef.current = null;
-      }, 300); // Delay before hiding
-    };
-
-    // Triggered on title/icon area enter
-    const playAnim = () => {
-      clearHideTimeout();
-      tl.current?.play(); // Show icons
-      floatingAnims.current.forEach(anim => anim.resume()); // Start floating
-    };
-
-    // Triggered on title/icon area leave
-    const reverseAnim = () => {
-      startHideTimeout(); // Start timer to hide icons
-    };
-
-    // Attach listeners
-    const titleElement = headerElement.querySelector('h1');
-    const iconContainerElement = headerElement.querySelector<HTMLDivElement>(
-      '.language-icon-container-desktop'
-    )?.parentElement;
-
-    if (titleElement) {
-      titleElement.addEventListener("mouseenter", playAnim);
-      titleElement.addEventListener("mouseleave", reverseAnim);
-    }
-    if (iconContainerElement) {
-      iconContainerElement.addEventListener("mouseenter", playAnim); // Keep icons visible when hovering them
-      iconContainerElement.addEventListener("mouseleave", reverseAnim);
-    }
-
-    // Effect cleanup
     return () => {
       window.removeEventListener('resize', checkMobile);
       clearHideTimeout();
@@ -223,7 +198,7 @@ export default function HomePageHeader({
       floatingAnims.current.forEach(anim => anim.kill());
       floatingAnims.current = [];
     };
-  }, [isMobile, locale, languages.length]);
+  }, [isMobile, locale, languages]);
 
   const handleItemClick = (targetLocale: string) => {
     const currentPath = window.location.pathname;
@@ -239,7 +214,6 @@ export default function HomePageHeader({
 
   return (
     <div ref={headerRef} className="relative flex flex-col items-center ">
-      {/* Title */}
       <motion.h1
         onClick={handleTitleClick}
         className={`text-4xl cursor-default select-none md:text-6xl font-bold mb-4 font-serif text-center ${isMobile ? 'cursor-pointer' : ''}`}
@@ -250,24 +224,25 @@ export default function HomePageHeader({
         {title}
       </motion.h1>
 
-      {/* Desktop Language Icons - Vrácena původní struktura kontejneru */}
       {!isMobile && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-10 h-full pointer-events-auto">
           {languages.map((lang, index) => {
             const imgSrc = langImages[lang];
             if (!imgSrc) return null;
-            // Přeskočíme renderování aktivního jazyka přímo zde
             if (lang === locale) return null;
             return (
               <div
                 key={lang}
                 ref={(el) => { itemsRef.current[index] = el; }}
                 data-lang={lang}
-                // Přidána třída z CSS modulu a původní třída
                 className={`${styles.initialHide} language-icon-container-desktop absolute cursor-pointer group w-[100px] h-[100px]`}
                 onClick={() => handleItemClick(lang)}
                 title={`Přepnout na ${lang.toUpperCase()}`}
-                style={{ pointerEvents: 'auto' }} // Ponecháme, GSAP to ovládá pro hover
+                aria-label={`Přepnout na ${lang.toUpperCase()}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && handleItemClick(lang)}
+                style={{ pointerEvents: 'auto' }}
               >
                 <Image
                   src={imgSrc}
@@ -282,7 +257,6 @@ export default function HomePageHeader({
         </div>
       )}
 
-      {/* Mobile Language Icons */}
       {isMobile && showIconsOnMobile && (
         <motion.div
           className="mt-4 w-full flex flex-wrap justify-center items-center gap-4"
@@ -299,6 +273,10 @@ export default function HomePageHeader({
                 className={`language-icon-container-mobile relative cursor-pointer group w-[80px] h-[80px]`}
                 onClick={() => handleItemClick(lang)}
                 title={`Přepnout na ${lang.toUpperCase()}`}
+                aria-label={`Přepnout na ${lang.toUpperCase()}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && handleItemClick(lang)}
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{
                   opacity: 1,
@@ -330,7 +308,6 @@ export default function HomePageHeader({
         </motion.div>
       )}
 
-      {/* Hint Text */}
       <motion.div
         ref={hintTextRef}
         className="mt-6 text-center"
@@ -344,7 +321,6 @@ export default function HomePageHeader({
         </p>
       </motion.div>
 
-      {/* Social Links */}
       <motion.div
         ref={socialLinksRef}
         className="flex items-center space-x-4 mt-8"

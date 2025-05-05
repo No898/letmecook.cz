@@ -32,7 +32,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px; /* Výška baru */
+  height: 4px;
   background: var(--accent);
   transform-origin: 0%;
   z-index: 50; /* Nad ostatním obsahem */
