@@ -45,11 +45,6 @@ export async function generateStaticParams() {
     return languages.map((locale) => ({ locale }));
 }
 
-
-// Komponenty Header/Footer
-const SiteHeader = () => <header className="sticky top-0 z-50 p-4 bg-gray-800 text-white shadow-md">Header Placeholder</header>;
-const SiteFooter = () => <footer className="p-4 mt-auto bg-gray-800 text-white text-center text-sm">Footer Placeholder</footer>;
-
 export default async function RootLayout({
     children,
     params,
@@ -96,13 +91,11 @@ export default async function RootLayout({
                 <link rel="manifest" href="/manifest.json" />
             </head>
             <body className={`${inter.variable} ${playfairDisplay.variable} font-sans flex flex-col min-h-screen antialiased`}>
-                <SiteHeader />
                 <div className="flex-grow w-full max-w-full mx-auto">
                     <main>
                         {children}
                     </main>
                 </div>
-                <SiteFooter />
                 <CookieConsentBanner />
                 <Analytics />
                 <SpeedInsights />
