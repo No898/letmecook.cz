@@ -31,3 +31,9 @@ Simultaneously, it functions as my personal **tech playground**. I use this proj
 Given the project's primary function as a *personal* cookbook with a limited, stable set of recipes, and its secondary function as a *tech playground*, storing recipes directly in the codebase ("hardcoded") was the most practical choice. It avoids the overhead of setting up and maintaining a CMS or database, allowing focus to remain on frontend experimentation and implementation details, while still providing a functional way to handle recipe data for the application's scope.
 
 **Performance:** Performance is actively monitored. You can check the current status using [Google PageSpeed Insights](https://pagespeed.web.dev/analysis?url=https://letmecook.cz).
+
+## Licensing
+
+The source code of this application is licensed under the **MIT License** (see the `LICENSE` file).
+
+The content, including recipe texts and images within the `src/data/recipes/` and `public/images/` directories, is **Copyright (c) 2025 Tomáš Dinh - All Rights Reserved**. You may not reproduce, distribute, or modify the content without explicit permission from the copyright holder.
