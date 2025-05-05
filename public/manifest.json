@@ -1,0 +1,16 @@
+{
+  "name": "Let Me Cook - Domácí Recepty",
+  "short_name": "LetMeCook",
+  "description": "Objevte chutě světa s kolekcí osobních receptů krok za krokem.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff", 
+  "theme_color": "#2d3748"
+} 
