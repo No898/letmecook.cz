@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import CookieConsentBanner from '@/components/CookieConsentBanner';
 import '@/app/globals.css';
 import { languages } from "../../i18n/settings";
+import { getTranslations } from "../../i18n/server";
 
 // Konfigurace fontů
 const inter = Inter({
@@ -53,6 +54,8 @@ export default async function RootLayout({
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
+    // Načtení překladové funkce
+    const { t } = await getTranslations(locale, 'common');
 
     return (
         <html lang={locale} dir="ltr" className="bg-background text-text_default scroll-smooth" suppressHydrationWarning>
@@ -91,7 +94,10 @@ export default async function RootLayout({
                 <link rel="manifest" href="/manifest.json" />
             </head>
             <body className={`${inter.variable} ${playfairDisplay.variable} font-sans flex flex-col min-h-screen antialiased`}>
-                <div className="flex-grow w-full max-w-full mx-auto">
+                <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:m-2 focus:bg-gray-800 focus:text-white focus:rounded">
+                    {t('skip_to_content')}
+                </a>
+                <div id="main-content" className="flex-grow w-full max-w-full mx-auto">
                     <main>
                         {children}
                     </main>

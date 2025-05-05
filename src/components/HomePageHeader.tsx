@@ -333,7 +333,7 @@ export default function HomePageHeader({
           aria-label="Instagram"
           className="text-gray-400 hover:text-gray-100 transition-colors duration-200"
         >
-          <FaInstagram size={24} />
+          <FaInstagram size={24} role="presentation" aria-hidden="true" />
         </a>
         <span className="text-sm text-gray-400">|</span>
         <a
@@ -341,7 +341,7 @@ export default function HomePageHeader({
           aria-label="Email"
           className="text-gray-400 hover:text-gray-100 transition-colors duration-200 flex items-center space-x-1"
         >
-          <FaEnvelope size={24} />
+          <FaEnvelope size={24} role="presentation" aria-hidden="true" />
           <span className="text-sm">{emailAddress}</span>
         </a>
       </motion.div>
