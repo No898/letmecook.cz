@@ -22,5 +22,9 @@
   "recipe.ingredients": "原料",
   "recipe.instructions": "指示",
   "recipe.description": "描述",
-  "home.title": "我的食譜"
-} 
+  "home.title": "我的食譜",
+  "filter_recipes": "篩選食譜...",
+  "clear_filters": "清除篩選",
+  "detailed_view": "詳細視圖",
+  "brief_view": "簡要視圖"
+}

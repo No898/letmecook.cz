@@ -22,5 +22,9 @@
   "recipe.ingredients": "Nguyên liệu",
   "recipe.instructions": "Hướng dẫn",
   "recipe.description": "Mô tả",
-  "home.title": "Công thức của tôi"
-} 
+  "home.title": "Công thức của tôi",
+  "filter_recipes": "Lọc công thức...",
+  "clear_filters": "Xóa bộ lọc",
+  "detailed_view": "Xem chi tiết",
+  "brief_view": "Xem tóm tắt"
+}

@@ -3,7 +3,6 @@
   "recipe_plural": "Recepty",
   "instagram_aria_label": "Odkaz na Instagram",
   "email_aria_label": "Odeslat email",
-
   "back_to_recipes": "Zpět na všechny recepty",
   "share_label": "Sdílet:",
   "share_on_facebook": "Sdílet na Facebooku",
@@ -16,14 +15,16 @@
   "detailed": "Detailní",
   "brief": "Stručné",
   "video_fallback": "Váš prohlížeč nepodporuje video tag.",
-  
   "recipe_not_found": "Recept nenalezen",
   "page_title_suffix": " | Recepty Tomáše Dinh",
-
   "greeting": "Ahoj světe!",
   "navbar.title": "Recepty",
   "recipe.ingredients": "Ingredience",
   "recipe.instructions": "Postup",
   "recipe.description": "Popis",
-  "home.title": "Moje Recepty"
-} 
+  "home.title": "Moje Recepty",
+  "filter_recipes": "Filtrovat recepty...",
+  "clear_filters": "Vymazat filtry",
+  "detailed_view": "Detailní zobrazení",
+  "brief_view": "Stručný náhled"
+}
