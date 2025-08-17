@@ -21,7 +21,7 @@ Simultaneously, it functions as my personal **tech playground**. I use this proj
 
 ## Core Features
 
-*   **Multi-language Support:** Interface and recipes available in Czech, English, Vietnamese, and Traditional Chinese.
+*   **Multi-language Support:** Interface and recipes available in Czech, English, Vietnamese, and Taiwanese.
 *   **Accessibility (A11y):** Continuous focus on accessibility, incorporating skip links, semantic HTML, ARIA attributes, and color contrast considerations.
 *   **Performance Optimization:** Attention to performance metrics using tools like Vercel Analytics and Speed Insights.
 *   **Static Data Approach:** Recipes are stored directly within the codebase (`src/data/recipes/`) as structured TypeScript objects.
