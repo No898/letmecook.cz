@@ -1,17 +1,12 @@
 import fs from "fs";
 import path from "path";
 import type { Recipe } from "@/types/recipe";
+
 // Import z helperu
 import { locales, publicBasePath, getRecipeFileInfoList } from "./helpers/recipeTestUtils";
 
 // Typ pro položku z getRecipeFileInfoList
 type RecipeFileInfo = ReturnType<typeof getRecipeFileInfoList>[number];
-
-// Sdílená logika je nyní v helperu
-// const recipesBasePath = ...
-// const publicBasePath = ...
-// const locales = ...
-// const getRecipeFilesInfo = ...
 
 describe("Recipe Image Existence", () => {
   locales.forEach((locale: string) => {
