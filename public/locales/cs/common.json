@@ -27,4 +27,17 @@
   "clear_filters": "Vymazat filtry",
   "detailed_view": "Detailní zobrazení",
   "brief_view": "Stručný náhled"
+  ,
+  "lang.cs": "čeština",
+  "lang.en": "angličtina",
+  "lang.vi": "vietnamština",
+  "lang.zh-TW": "tchajwanština",
+  "langAcc.cs": "češtinu",
+  "langAcc.en": "angličtinu",
+  "langAcc.vi": "vietnamštinu",
+  "langAcc.zh-TW": "tchajwanštinu",
+  "switch_to_language": "Přepnout na {{language}}",
+  "language_image_alt": "Jídlo reprezentující {{language}}",
+  "lang_hint.desktop": "Najetím na název změníš jazyk.",
+  "lang_hint.mobile": "Klepnutím na název změníš jazyk."
 }

@@ -27,4 +27,13 @@
   "clear_filters": "Clear filters",
   "detailed_view": "Detailed view",
   "brief_view": "Brief view"
+  ,
+  "lang.cs": "Czech",
+  "lang.en": "English",
+  "lang.vi": "Vietnamese",
+  "lang.zh-TW": "Taiwanese",
+  "switch_to_language": "Switch to {{language}}",
+  "language_image_alt": "Food representing {{language}}",
+  "lang_hint.desktop": "Hover the title to change language.",
+  "lang_hint.mobile": "Tap the title to change language."
 }

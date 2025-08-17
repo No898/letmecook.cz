@@ -14,6 +14,10 @@ interface HomePageHeaderProps {
   emailAddress: string;
   locale: string;
   languages: string[];
+  switchTitles: Record<string, string>;
+  altTexts: Record<string, string>;
+  hintDesktop: string;
+  hintMobile: string;
 }
 
 export default function HomePageHeader({
@@ -22,6 +26,10 @@ export default function HomePageHeader({
   emailAddress,
   locale,
   languages,
+  switchTitles,
+  altTexts,
+  hintDesktop,
+  hintMobile,
 }: HomePageHeaderProps) {
   const router = useRouter();
   const headerRef = useRef<HTMLDivElement>(null);
@@ -237,8 +245,8 @@ export default function HomePageHeader({
                 data-lang={lang}
                 className={`${styles.initialHide} language-icon-container-desktop absolute cursor-pointer group w-[100px] h-[100px]`}
                 onClick={() => handleItemClick(lang)}
-                title={`Přepnout na ${lang.toUpperCase()}`}
-                aria-label={`Přepnout na ${lang.toUpperCase()}`}
+                title={switchTitles[lang] ?? switchTitles['default'] ?? ''}
+                aria-label={switchTitles[lang] ?? switchTitles['default'] ?? ''}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && handleItemClick(lang)}
@@ -246,7 +254,7 @@ export default function HomePageHeader({
               >
                 <Image
                   src={imgSrc}
-                  alt={`Jídlo reprezentující ${lang.toUpperCase()}`}
+                  alt={altTexts[lang] ?? altTexts['default'] ?? ''}
                   width={100}
                   height={100}
                   className="object-contain rounded-full group-hover:scale-110 transition-transform duration-200 "
@@ -272,8 +280,8 @@ export default function HomePageHeader({
                 key={lang}
                 className={`language-icon-container-mobile relative cursor-pointer group w-[80px] h-[80px]`}
                 onClick={() => handleItemClick(lang)}
-                title={`Přepnout na ${lang.toUpperCase()}`}
-                aria-label={`Přepnout na ${lang.toUpperCase()}`}
+                title={switchTitles[lang] ?? switchTitles['default'] ?? ''}
+                aria-label={switchTitles[lang] ?? switchTitles['default'] ?? ''}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && handleItemClick(lang)}
@@ -297,7 +305,7 @@ export default function HomePageHeader({
               >
                 <Image
                   src={imgSrc}
-                  alt={`Jídlo reprezentující ${lang.toUpperCase()}`}
+                  alt={altTexts[lang] ?? altTexts['default'] ?? ''}
                   width={80}
                   height={80}
                   className="object-contain rounded-full shadow-md"
@@ -314,10 +322,7 @@ export default function HomePageHeader({
         initial={{ opacity: 1 }}
       >
         <p className="text-xs text-gray-400 italic">
-          {isMobile
-            ? "Click the title to change language."
-            : "Hover over the title to change language."
-          }
+          {isMobile ? hintMobile : hintDesktop}
         </p>
       </motion.div>
 

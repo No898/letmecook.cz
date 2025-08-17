@@ -27,4 +27,13 @@
   "clear_filters": "清除篩選",
   "detailed_view": "詳細視圖",
   "brief_view": "簡要視圖"
+  ,
+  "lang.cs": "捷克語",
+  "lang.en": "英語",
+  "lang.vi": "越南語",
+  "lang.zh-TW": "中文（台灣）",
+  "switch_to_language": "切換到{{language}}",
+  "language_image_alt": "代表{{language}}的食物",
+  "lang_hint.desktop": "將滑鼠移到標題以更改語言。",
+  "lang_hint.mobile": "點擊標題以更改語言。"
 }

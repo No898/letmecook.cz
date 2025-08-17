@@ -27,4 +27,13 @@
   "clear_filters": "Xóa bộ lọc",
   "detailed_view": "Xem chi tiết",
   "brief_view": "Xem tóm tắt"
+  ,
+  "lang.cs": "Tiếng Séc",
+  "lang.en": "Tiếng Anh",
+  "lang.vi": "Tiếng Việt",
+  "lang.zh-TW": "Tiếng Đài Loan",
+  "switch_to_language": "Chuyển sang {{language}}",
+  "language_image_alt": "Món ăn đại diện cho {{language}}",
+  "lang_hint.desktop": "Di chuột qua tiêu đề để đổi ngôn ngữ.",
+  "lang_hint.mobile": "Nhấn vào tiêu đề để đổi ngôn ngữ."
 }
