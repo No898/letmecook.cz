@@ -3,9 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import { languages } from "@/i18n/settings";
 
-// Nastavte základní URL vašeho webu. Ideálně z environmentální proměnné.
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://letmecook.cz";
-// Ujistěte se, že NEXT_PUBLIC_BASE_URL je nastavena ve vašem Vercel projektu.
 
 // Regex pro extrakci datePublished: 'YYYY-MM-DD'
 const datePublishedRegex = /datePublished:\s*['|"](\d{4}-\d{2}-\d{2})['|"]/;
@@ -27,7 +25,7 @@ async function getAllActualRecipePaths(): Promise<{ locale: string; id: string; 
             let lastModifiedDate: Date | null = null;
 
             try {
-              // Zkusíme přečíst soubor a najít datePublished
+              // Přečíst soubor a najít datePublished
               const fileContent = await fs.readFile(filePath, 'utf-8');
               const match = fileContent.match(datePublishedRegex);
               if (match && match[1]) {
