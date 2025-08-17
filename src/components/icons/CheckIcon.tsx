@@ -6,7 +6,7 @@ const CheckIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
-        strokeWidth={3} // Může být potřeba upravit podle designu
+        strokeWidth={3} 
         {...props}
     >
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />

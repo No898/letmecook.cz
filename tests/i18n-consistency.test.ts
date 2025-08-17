@@ -1,5 +1,5 @@
 // tests/i18n-consistency.test.ts
-// import fs from "fs"; // Nepotřebné pro tento soubor po refaktoringu
+
 import path from "path";
 import {
   locales,

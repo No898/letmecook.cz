@@ -34,18 +34,14 @@ export function middleware(req: NextRequest) {
     if (!lng || languages.indexOf(lng) === -1) {
         lng = fallbackLng
     }
-    // console.log(`Middleware: Detected language: ${lng} for path: ${pathname}`);
-
+  
     // Přesměrování pokud locale chybí v URL (vráceno)
     const localeInPath = languages.some((loc) => pathname.startsWith(`/${loc}`))
 
     if (!localeInPath) {
         const targetUrl = new URL(`/${lng}${pathname}${req.nextUrl.search}`, req.url)
-        // console.log(`Middleware: Redirecting ${pathname} to ${targetUrl.toString()}`);
         return NextResponse.redirect(targetUrl)
     }
-
-    // console.log(`Middleware: Locale found in path: ${pathname}`);
 
     // Nastavení cookie pro budoucí požadavky (vráceno)
     if (req.headers.has('referer')) {

@@ -70,8 +70,5 @@ export const RecipeSchema = z.object({
   recipeCategory: z.string().optional(),
   recipeCuisine: z.string().optional(),
   keywords: z.string().optional(), // Klíčová slova jako jeden string
-  originCountryCode: z.string().length(2).optional(), // Kód země ISO 3166-1 alpha-2 (2 písmena), volitelný
+  originCountryCode: z.string().length(2).optional(), 
 });
-
-// Můžeme také exportovat odvozený TypeScript typ, pokud bychom chtěli nahradit původní
-// export type Recipe = z.infer<typeof RecipeSchema>;

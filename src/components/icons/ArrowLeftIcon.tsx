@@ -7,7 +7,7 @@ const ArrowLeftIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        {...props} // Umožňuje předat další props, např. className
+        {...props}
     >
         <path
             strokeLinecap="round"
