@@ -10,7 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@openai/codex": "^0.22.0",
     "@types/js-cookie": "^3.0.6",
     "@vercel/analytics": "^1.5.0",
     "@vercel/speed-insights": "^1.2.0",
